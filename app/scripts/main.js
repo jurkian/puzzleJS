@@ -5,6 +5,6 @@
 		alert('Make sure your browser is up to date. Consider using Chrome or Firefox.');
 	}
 
-	Uploader.init();
-
+	// Initialize the app if all files are loaded
+	window.addEventListener('load', Uploader.init, false);
 })();
