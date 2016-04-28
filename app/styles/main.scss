@@ -11,6 +11,13 @@ $icon-font-path: '../fonts/';
   justify-content: center;
 }
 
+[draggable="true"] {
+  -moz-user-select:none;
+  user-select: none;
+  -khtml-user-drag: element;
+  cursor: move;
+}
+
 #drop-zone {
   max-width: 800px;
   width: 100%;
@@ -24,5 +31,9 @@ $icon-font-path: '../fonts/';
   h3 {
     font-size: 48px;
     color: #ebebeb;
+  }
+
+  &.drag-over {
+    border: 2px dashed #000;
   }
 }
