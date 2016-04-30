@@ -6,6 +6,8 @@ $icon-font-path: '../fonts/';
 
 .wrapper {
   height: 100vh;
+  max-width: 850px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,22 +20,52 @@ $icon-font-path: '../fonts/';
   cursor: move;
 }
 
-#drop-zone {
+.drop-zone, .puzzle-preview {
   max-width: 800px;
   width: 100%;
-  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px #bebebe dashed;
+  border: 3px #bebebe dashed;
+  transition: all 1s ease;
+  z-index: 2;
+  background: #fff;
 
   h3 {
     font-size: 48px;
     color: #ebebeb;
   }
+}
 
+.drop-zone {
+  height: 300px;
+  
   &.drag-over {
-    border: 2px dashed #000;
+    border-color: #333;
   }
+}
+
+.puzzle-preview {
+  height: 470px;
+  
+  .create-puzzle {
+    margin-bottom: 30px;
+  }
+
+  figure {
+    max-width: 90%;
+    max-height: 320px;
+    overflow: hidden;
+  }
+}
+
+.hide-view {
+  opacity: 0;
+  display: none;
+}
+
+.show-view {
+  opacity: 1;
+  display: flex;
 }

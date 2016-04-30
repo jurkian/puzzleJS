@@ -25,13 +25,15 @@ var Uploader = (function() {
 		}
 
 		if (uploadedFile.length !== 1) {
-			alert('You can upload only 1 image. Try again');
+			alert('You can upload only 1 image - Try again');
 
 		} else {
 
 			if (uploadedFile[0].type.match('image.*')) {
 				// There is one file and it's an image
 				_generateImgPreview(uploadedFile[0]);
+			} else {
+				alert('You can upload only images');
 			}
 		}
 		
