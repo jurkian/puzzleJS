@@ -8,9 +8,11 @@
 		}
 
 		var dropZone = document.querySelector('#drop-zone'),
-				uploadImageBtn = document.querySelector("#upload-image"),
 				puzzlePreview = document.querySelector('#puzzle-preview'),
-				imageCode = '';
+				puzzleGame = document.querySelector("#puzzle-game"),
+				uploadImageBtn = document.querySelector("#upload-image"),
+				imageCode = '',
+				createPuzzleBtn = document.querySelector("#create-puzzle");
 
 		// Initialize image uploader
 		Uploader.init(dropZone, uploadImageBtn);
@@ -49,6 +51,7 @@
 			});
 		};
 
+		// Puzzle preview view
 		var handlePuzzlePreview = function() {
 			
 			// Show image preview
@@ -60,6 +63,33 @@
 
 			puzzlePreview.onCSSTransitionEnd(function() {
 				puzzlePreview.classList.remove('transparent-view');
+			});
+		};
+
+		// Puzzle game view
+		var gotoPuzzleGame = function() {
+
+			// Hide puzzle preview (transparent)
+			puzzlePreview.classList.add('transparent-view');
+
+			puzzlePreview.onCSSTransitionEnd(function() {
+				// Hide puzzlePreview completely
+				puzzlePreview.classList.add('hide-view');
+
+				// Show puzzle game
+				handlePuzzleGame();
+			});
+		};
+
+		createPuzzleBtn.addEventListener('click', gotoPuzzleGame, false);
+
+		var handlePuzzleGame = function() {
+			
+			// Show puzzle game
+			puzzleGame.classList.remove('hide-view');
+
+			puzzleGame.onCSSTransitionEnd(function() {
+				puzzleGame.classList.remove('transparent-view');
 			});
 		};
 
