@@ -27,7 +27,7 @@
 				imageCode = image;
 				gotoPuzzlePreview();
 			});
-			
+
 		};
 
 		dropZone.addEventListener('drop', handleImageDrop, false);
@@ -40,18 +40,13 @@
 			// Hide dropZone (transparent)
 			dropZone.classList.add('transparent-view');
 
-			// When dropZone transition ends			
-			var dropZoneTransitionEnd = function(e) {
-
+			dropZone.onCSSTransitionEnd(function() {
 				// Hide dropZone completely
 				dropZone.classList.add('hide-view');
 
 				// Show puzzle preview
 				handlePuzzlePreview();
-			};
-
-			dropZone.addEventListener('webkitTransitionEnd', dropZoneTransitionEnd, false);
-			dropZone.addEventListener('transitionend', dropZoneTransitionEnd, false);
+			});
 		};
 
 		var handlePuzzlePreview = function() {
@@ -63,10 +58,9 @@
 			// Make the view visible
 			puzzlePreview.classList.remove('hide-view');
 
-			// Wait a short time to prevent transition stopping
-			setTimeout(function() {
+			puzzlePreview.onCSSTransitionEnd(function() {
 				puzzlePreview.classList.remove('transparent-view');
-			}, 20);
+			});
 		};
 
 	};
