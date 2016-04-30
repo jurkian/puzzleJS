@@ -1,17 +1,22 @@
 var Uploader = (function() {
 
-	var _dropZone = document.querySelector("#drop-zone"),
-			_uploadImageBtn = document.querySelector("#upload-image");
+	var _dropZone = '',
+			_uploadImageBtn = '';
+
+	var init = function(dropZone, uploadImageBtn) {
+		_dropZone = dropZone;
+		_uploadImageBtn = uploadImageBtn;
+	};
 	
-	var _addHover = function() {
+	var addHover = function() {
 		_dropZone.classList.add("drag-over");
 	};
 
-	var _removeHover = function() {
+	var removeHover = function() {
 		_dropZone.classList.remove("drag-over");
 	};
 
-	var _handleDrop = function(e) {
+	var handleDrop = function(e, callback) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -26,47 +31,44 @@ var Uploader = (function() {
 
 		if (uploadedFile.length !== 1) {
 			alert('You can upload only 1 image - Try again');
-
 		} else {
 
 			if (uploadedFile[0].type.match('image.*')) {
+
 				// There is one file and it's an image
-				_generateImgPreview(uploadedFile[0]);
+				_getImage(uploadedFile[0], callback);
+
 			} else {
 				alert('You can upload only images');
 			}
 		}
 		
-		_removeHover();
+		removeHover();
 	};
 
-	var _cancelDefault = function(e) {
+	var cancelDefault = function(e) {
 		e.preventDefault();
 		return false;
 	};
 
-	var _generateImgPreview = function(file) {
+	var _getImage = function(file, callback) {
 		var reader = new FileReader(),
-				img = document.createElement('img');
+				imageCode = '';
 
 		reader.onload = function() {
-			img.src = reader.result;
+			imageCode = reader.result;
+			callback(imageCode);
 		};
 
 		reader.readAsDataURL(file);
-		document.body.appendChild(img);
-	};
-
-	var init = function() {
-		_dropZone.addEventListener('dragenter', _addHover, false);
-		_dropZone.addEventListener('dragleave', _removeHover, false);
-		_dropZone.addEventListener('dragover', _cancelDefault, false);
-		_dropZone.addEventListener('drop', _handleDrop, false);
-		_uploadImageBtn.addEventListener('change', _handleDrop, false);
 	};
 
 	return {
-		init: init
+		init: init,
+		addHover: addHover,
+		removeHover: removeHover,
+		cancelDefault: cancelDefault,
+		handleDrop: handleDrop
 	};
 
 })();
