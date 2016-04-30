@@ -91,8 +91,9 @@
 			puzzleGame.onCSSTransitionEnd(function() {
 				puzzleGame.classList.remove('transparent-view');
 			});
-		};
 
+			Puzzle.init(imageCode);
+		};
 	};
 
 	// Initialize the app if all assets are loaded
