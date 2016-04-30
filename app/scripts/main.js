@@ -9,7 +9,8 @@
 
 		var dropZone = document.querySelector('#drop-zone'),
 				uploadImageBtn = document.querySelector("#upload-image"),
-				puzzlePreview = document.querySelector('#puzzle-preview');
+				puzzlePreview = document.querySelector('#puzzle-preview'),
+				imageCode = '';
 
 		// Initialize image uploader
 		Uploader.init(dropZone, uploadImageBtn);
@@ -22,17 +23,46 @@
 		// Handle image drop event
 		var handleImageDrop = function(e) {
 
-			Uploader.handleDrop(e, function(imageCode) {
-				var img = document.createElement('img');
-				
-				img.src = imageCode;
-				document.body.appendChild(img);
+			Uploader.handleDrop(e, function(image) {
+				imageCode = image;
+				gotoPuzzlePreview();
 			});
 			
 		};
 
 		dropZone.addEventListener('drop', handleImageDrop, false);
 		uploadImageBtn.addEventListener('change', handleImageDrop, false);
+
+		// User uploaded an image
+		// Go to puzzle preview
+		var gotoPuzzlePreview = function() {
+
+			// Hide dropZone (transparent)
+			dropZone.classList.add('transparent-view');
+
+			// When dropZone transition ends			
+			var dropZoneTransitionEnd = function(e) {
+
+				// Hide dropZone completely
+				dropZone.classList.add('hide-view');
+
+				// Show puzzle preview
+				handlePuzzlePreview();
+			};
+
+			dropZone.addEventListener('webkitTransitionEnd', dropZoneTransitionEnd, false);
+			dropZone.addEventListener('transitionend', dropZoneTransitionEnd, false);
+		};
+
+		var handlePuzzlePreview = function() {
+			
+			// Show image preview
+			var img = document.querySelector('#puzzle-preview img');
+			img.src = imageCode;
+
+			// Make the view visible
+			puzzlePreview.classList.remove('transparent-view', 'hide-view');
+		};
 
 	};
 

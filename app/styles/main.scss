@@ -28,7 +28,7 @@ $icon-font-path: '../fonts/';
   align-items: center;
   justify-content: center;
   border: 3px #bebebe dashed;
-  transition: all 1s ease;
+  transition: all .7s ease;
   z-index: 2;
   background: #fff;
 
@@ -38,6 +38,8 @@ $icon-font-path: '../fonts/';
   }
 }
 
+/* Drop zone */
+
 .drop-zone {
   height: 300px;
   
@@ -45,6 +47,8 @@ $icon-font-path: '../fonts/';
     border-color: #333;
   }
 }
+
+/* Puzzle preview */
 
 .puzzle-preview {
   height: 470px;
@@ -60,12 +64,17 @@ $icon-font-path: '../fonts/';
   }
 }
 
+/* Show/hide views */
+
+.transparent-view {
+  opacity: 0 !important;
+}
+
 .hide-view {
-  opacity: 0;
-  display: none;
+  display: none !important;
 }
 
 .show-view {
-  opacity: 1;
+  opacity: 1 !important;
   display: flex;
 }
