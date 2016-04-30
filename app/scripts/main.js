@@ -61,7 +61,12 @@
 			img.src = imageCode;
 
 			// Make the view visible
-			puzzlePreview.classList.remove('transparent-view', 'hide-view');
+			puzzlePreview.classList.remove('hide-view');
+
+			// Wait a short time to prevent transition stopping
+			setTimeout(function() {
+				puzzlePreview.classList.remove('transparent-view');
+			}, 20);
 		};
 
 	};
