@@ -28,7 +28,14 @@
 
 			Uploader.handleDrop(e, function(image) {
 				imageCode = image;
-				gotoPuzzlePreview();
+
+				// User uploaded an image
+				// Go to puzzle preview
+				App.changeView(puzzlePreview, function() {
+					// Show uploaded image preview
+					var img = document.querySelector('#puzzle-preview img');
+					img.src = imageCode;
+				});
 			});
 
 		};
@@ -36,49 +43,13 @@
 		dropZone.addEventListener('drop', handleImageDrop, false);
 		uploadImageBtn.addEventListener('change', handleImageDrop, false);
 
-		// User uploaded an image
-		// Go to puzzle preview
-		var gotoPuzzlePreview = function() {
-
-			// Hide dropZone (transparent)
-			dropZone.classList.add('transparent-view');
-
-			dropZone.onCSSTransitionEnd(function() {
-				// Hide dropZone completely
-				dropZone.classList.add('hide-view');
-
-				// Show puzzle preview
-				handlePuzzlePreview();
-			});
-		};
-
-		// Puzzle preview view
-		var handlePuzzlePreview = function() {
-			
-			// Show image preview
-			var img = document.querySelector('#puzzle-preview img');
-			img.src = imageCode;
-
-			// Make the view visible
-			puzzlePreview.classList.remove('hide-view');
-
-			puzzlePreview.onCSSTransitionEnd(function() {
-				puzzlePreview.classList.remove('transparent-view');
-			});
-		};
-
 		// User decided to create puzzles
 		// Go to puzzle game
 		var gotoPuzzleGame = function() {
 
-			// Hide puzzle preview (transparent)
-			puzzlePreview.classList.add('transparent-view');
-
-			puzzlePreview.onCSSTransitionEnd(function() {
-				// Hide puzzlePreview completely
-				puzzlePreview.classList.add('hide-view');
-
-				// Show puzzle game
+			App.changeView(puzzleGame, function() {
+				document.querySelector('.wrapper').classList.add('game-wrapper');
+			}, function() {
 				handlePuzzleGame();
 			});
 		};
@@ -87,14 +58,6 @@
 		
 		// Puzzle game view
 		var handlePuzzleGame = function() {
-			
-			// Show puzzle game
-			document.querySelector('.wrapper').classList.add('game-wrapper');
-			puzzleGame.classList.remove('hide-view');
-
-			puzzleGame.onCSSTransitionEnd(function() {
-				puzzleGame.classList.remove('transparent-view');
-			});
 
 			// Initialize puzzle game
 			Puzzle.init(imageCode);
