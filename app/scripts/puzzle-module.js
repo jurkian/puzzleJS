@@ -41,6 +41,9 @@ var Puzzle = (function() {
 
 			  _drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
 
+			  // Randomize the puzzle images array
+			  imgParts = App.randomizeArray(imgParts);
+
 			  if (typeof callback === 'function') {
 			  	callback(imgParts);
 			  }	
