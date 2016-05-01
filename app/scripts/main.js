@@ -89,6 +89,7 @@
 		var handlePuzzleGame = function() {
 			
 			// Show puzzle game
+			document.querySelector('.wrapper').classList.add('game-wrapper');
 			puzzleGame.classList.remove('hide-view');
 
 			puzzleGame.onCSSTransitionEnd(function() {
@@ -100,12 +101,13 @@
 
 			Puzzle.generatePuzzles(4, 4, function(generatedPuzzles) {
 				
-				// Output puzzles
+				// Prepare and output puzzles
 				for (var i = 0, len = generatedPuzzles.length; i < len; i++) {
 					var singlePuzzle = document.createElement("img");
 					
 					singlePuzzle.src = generatedPuzzles[i];
 					singlePuzzle.setAttribute('draggable', true);
+
 					puzzleList.appendChild(singlePuzzle);
 				}
 			});

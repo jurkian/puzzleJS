@@ -66,8 +66,16 @@ $icon-font-path: '../fonts/';
 
 /* Puzzle game */
 
+.game-wrapper {
+  max-width: 80%;
+}
+
 .puzzle-game {
-  
+  max-width: 100%;
+}
+
+.single-puzzle {
+
 }
 
 /* Show/hide views */
