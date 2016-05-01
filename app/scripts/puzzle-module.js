@@ -39,6 +39,8 @@ var Puzzle = (function() {
 			  	}
 			  }
 
+			  _drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
+
 			  if (typeof callback === 'function') {
 			  	callback(imgParts);
 			  }	
@@ -49,6 +51,23 @@ var Puzzle = (function() {
 			}
 
 		};
+	};
+
+	var _drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
+		var puzzleDropZoneEl = document.querySelector('#puzzle-game-dz');
+
+	  for (var y = 0; y < tilesY; y++) {
+	  	for (var x = 0; x < tilesX; x++) {
+  			
+  			var singleDz = document.createElement('div');
+
+  			singleDz.classList.add('single-puzzle-game-dz');
+  			singleDz.style.width = imgWidth + 'px';
+  			singleDz.style.height = imgHeight + 'px';
+  			
+  			puzzleDropZoneEl.appendChild(singleDz);
+	  	}
+	  }
 	};
 
 	return {
