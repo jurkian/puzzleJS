@@ -5,35 +5,41 @@ var Puzzle = (function() {
 	var init = function(imageCode) {
 		_imageCode = imageCode;
 	};
-	   
+		 
 	var generatePuzzles = function(callback) {
 		
 		// Prepare image to split into parts
 		var img = new Image();
+
 		img.src = _imageCode;
-		
 		img.onload = function() {
 
 			// Convert image (base64) to parts (single puzzles), using canvas
-			var canvas = document.createElement("canvas"),
-					ctx = canvas.getContext("2d"),
-					imgParts = [],
-					singleWidth = img.width / 6,
-		      singleHeight = img.height / 6;
-		  
-		  canvas.width  = singleWidth;
-		  canvas.height = singleHeight;
+		  var canvas = document.createElement("canvas"),
+		  		ctx = canvas.getContext("2d"),
+		  		imgParts = [],
+		  		tilesX = 4,
+		  		tilesY = 4,
+		  		singleWidth = img.width / tilesX,
+		  		singleHeight = img.height / tilesY;
 
-		  for (var i = 0; i < 12; i++) {
+		  for (var y = 0; y < tilesY; y++) {
+		  	for (var x = 0; x < tilesX; x++) {
+	  			
+	  			canvas.width = singleWidth;
+	  			canvas.height = singleHeight;
+	  			
+	  			// ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+	  			// sx, sy = calculate dynamically (source image)
+	  			// dx, dy = 0 (we don't want to move the clipped image on new canvas)
+	  			ctx.drawImage(img, x * singleWidth, y * singleHeight, singleWidth, singleHeight, 0, 0, singleWidth, singleHeight);
 
-		    var x = (-singleWidth * i) % (singleWidth * 6),
-		        y = (singleHeight * i) <= singleHeight ? 0 : -singleHeight;
-
-		    ctx.drawImage(this, x, y, singleWidth * 6, singleHeight * 6); // img, x, y, w, h
-		    imgParts.push(canvas.toDataURL()); // ("image/jpeg") for jpeg
+		  		// Store the image data of each tile in the array
+		  		imgParts.push(canvas.toDataURL()); // ("image/jpeg") for jpeg
+		  	}
 		  }
 
-		  callback(imgParts);
+			callback(imgParts);
 		};
 
 	};

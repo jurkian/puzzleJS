@@ -100,14 +100,13 @@
 
 			Puzzle.generatePuzzles(function(generatedPuzzles) {
 				
-				// Output puzzles on body
+				// Output puzzles
 				for (var i = 0, len = generatedPuzzles.length; i < len; i++) {
 					var singlePuzzle = document.createElement("img");
+					
 					singlePuzzle.src = generatedPuzzles[i];
-
-					var div = document.createElement('div');
-					div.appendChild(singlePuzzle);
-					document.body.appendChild(div);
+					singlePuzzle.setAttribute('draggable', true);
+					puzzleList.appendChild(singlePuzzle);
 				}
 				
 			});
