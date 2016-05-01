@@ -110,6 +110,8 @@
 
 					puzzleList.appendChild(singlePuzzle);
 				}
+
+				Puzzle.makePuzzlesDraggable();
 			});
 		};
 	};

@@ -70,9 +70,82 @@ var Puzzle = (function() {
 	  }
 	};
 
+	var makePuzzlesDraggable = function() {
+
+		var puzzleDropZones = document.querySelectorAll('#puzzle-game-dz > div'),
+				puzzleDragEls = document.querySelectorAll('#puzzle-list img'),
+				elementDragged = null,
+				i = 0,
+				len = 0;
+
+		// Drop zone/puzzles event handling functions
+		var dzDragstart = function(e) {
+			e.dataTransfer.effectAllowed = 'move';
+			e.dataTransfer.setData('text', this.innerHTML);
+
+			elementDragged = this;
+		};
+
+		var dzDragend = function(e) {
+			elementDragged = null;
+		};
+
+		var dzDragover = function(e) {
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'move';
+
+			return false;
+		};
+
+		var dzDragenter = function() {
+			this.classList.add('dz-highlight');
+		};
+
+		var dzDragleave = function() {
+			this.classList.remove('dz-highlight');
+		};
+
+		var dzDrop = function(e) {
+			e.preventDefault();
+	  	e.stopPropagation();
+
+			this.classList.remove('dz-highlight');
+
+			return false;
+		};
+
+		// Events for draggable puzzles
+		for (i = 0, len = puzzleDragEls.length; i < len; i++) {
+
+			// When the drag interaction starts
+			puzzleDragEls[i].addEventListener('dragstart', dzDragstart);
+
+			// When the drag interaction finishes
+			puzzleDragEls[i].addEventListener('dragend', dzDragend);
+		}
+
+		// Events for puzzle drop zones
+		for (i = 0, len = puzzleDropZones.length; i < len; i++) {
+
+			// When the dragged element is over the drop zone
+			puzzleDropZones[i].addEventListener('dragover', dzDragover);
+
+			// When the dragged element enters the drop zone
+			puzzleDropZones[i].addEventListener('dragenter', dzDragenter);
+
+			// When the dragged element leaves the drop zone
+			puzzleDropZones[i].addEventListener('dragleave', dzDragleave);
+
+			// Event Listener for when the dragged element dropped in the drop zone.
+			puzzleDropZones[i].addEventListener('drop', dzDrop);
+		}
+
+	};
+
 	return {
 		init: init,
-		generatePuzzles: generatePuzzles
+		generatePuzzles: generatePuzzles,
+		makePuzzlesDraggable: makePuzzlesDraggable
 	};
 
 })();
