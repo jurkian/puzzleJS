@@ -64,16 +64,7 @@
 
 			Puzzle.generatePuzzles(4, 4, function(generatedPuzzles) {
 				
-				// Prepare and output puzzles
-				for (var i = 0, len = generatedPuzzles.length; i < len; i++) {
-					var singlePuzzle = document.createElement("img");
-					
-					singlePuzzle.src = generatedPuzzles[i];
-					singlePuzzle.setAttribute('draggable', true);
-
-					puzzleList.appendChild(singlePuzzle);
-				}
-
+				Puzzle.drawPuzzles(generatedPuzzles, puzzleList);
 				Puzzle.makePuzzlesDraggable();
 			});
 		};

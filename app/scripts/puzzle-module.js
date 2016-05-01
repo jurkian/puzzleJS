@@ -73,6 +73,18 @@ var Puzzle = (function() {
 	  }
 	};
 
+	var drawPuzzles = function(generatedPuzzles, puzzleList) {
+		// Prepare and output puzzles
+		for (var i = 0, len = generatedPuzzles.length; i < len; i++) {
+			var singlePuzzle = document.createElement("img");
+			
+			singlePuzzle.src = generatedPuzzles[i];
+			singlePuzzle.setAttribute('draggable', true);
+
+			puzzleList.appendChild(singlePuzzle);
+		}
+	};
+
 	var makePuzzlesDraggable = function() {
 
 		var puzzleDropZones = document.querySelectorAll('#puzzle-game-dz > div'),
@@ -148,6 +160,7 @@ var Puzzle = (function() {
 	return {
 		init: init,
 		generatePuzzles: generatePuzzles,
+		drawPuzzles: drawPuzzles,
 		makePuzzlesDraggable: makePuzzlesDraggable
 	};
 
