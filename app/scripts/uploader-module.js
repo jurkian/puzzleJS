@@ -57,7 +57,10 @@ var Uploader = (function() {
 
 		reader.onload = function() {
 			imageCode = reader.result;
-			callback(imageCode);
+			
+			if (typeof callback === 'function') {
+				callback(imageCode);
+			}
 		};
 
 		reader.readAsDataURL(file);

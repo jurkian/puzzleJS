@@ -98,7 +98,7 @@
 			// Initialize puzzle game
 			Puzzle.init(imageCode);
 
-			Puzzle.generatePuzzles(function(generatedPuzzles) {
+			Puzzle.generatePuzzles(4, 4, function(generatedPuzzles) {
 				
 				// Output puzzles
 				for (var i = 0, len = generatedPuzzles.length; i < len; i++) {
@@ -108,7 +108,6 @@
 					singlePuzzle.setAttribute('draggable', true);
 					puzzleList.appendChild(singlePuzzle);
 				}
-				
 			});
 		};
 	};
