@@ -98,8 +98,6 @@ var Puzzle = (function() {
 			singlePuzzle.src = puzzleCodes[i];
 			singlePuzzle.setAttribute('draggable', true);
 			singlePuzzle.dataset.index = i+1;
-			singlePuzzle.style.left = startingLeftPx * (i+1) + 'px';
-			singlePuzzle.style.top = startingLeftPx * (i+1) + 'px';
 
 			generatedImages.push(singlePuzzle);
 		}
@@ -109,6 +107,9 @@ var Puzzle = (function() {
 
 		// Show ready images on screen
 		for (i = 0, len = generatedImages.length; i < len; i++) {
+			generatedImages[i].style.left = startingLeftPx * (i+1) + 'px';
+			generatedImages[i].style.top = startingLeftPx * (i+1) + 'px';
+
 			puzzleContainer.appendChild(generatedImages[i]);
 		}
 	};
@@ -201,7 +202,16 @@ var Puzzle = (function() {
 
 			// Handle puzzle guesses
 			if (parseInt(this.dataset.correctId, 10) === dPuzzleIndex) {
-				_correctPuzzleDrop(dImage, this);
+				var dropZoneEvents = {
+					'dragover': dzDragover,
+					'dragenter': dzDragenter,
+					'dragleave': dzDragleave,
+					'drop': dzDrop
+				};
+
+				var dropZone = this;
+				_correctPuzzleDrop(dImage, dropZone, dropZoneEvents);
+
 			} else {
 				_incorrectPuzzleDrop();
 			}
@@ -225,13 +235,21 @@ var Puzzle = (function() {
 
 	};
 
-	var _correctPuzzleDrop = function(image, dropZone) {
+	var _correctPuzzleDrop = function(image, dropZone, dropZoneEvents) {
 		// Show the guessed puzzle on single drop zone
 		var imageSrc = image.src;
 		dropZone.style.background = 'url(' + imageSrc + ')';
 
 		// Remove the guessed puzzle
 		document.querySelector('#puzzle-game').removeChild(image);
+
+		// Remove event listeners from the drop zone
+		// To prevent dropping images on it
+		for (var event in dropZoneEvents) {
+		  if (dropZoneEvents.hasOwnProperty(event)) {
+		    dropZone.removeEventListener(event, dropZoneEvents[event]);
+		  }
+		}
 	};
 
 	var _incorrectPuzzleDrop = function() {
