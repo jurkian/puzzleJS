@@ -12,8 +12,7 @@
 				puzzleGame = document.querySelector("#puzzle-game"),
 				uploadImageBtn = document.querySelector("#upload-image"),
 				imageCode = '',
-				createPuzzleBtn = document.querySelector("#create-puzzle"),
-				puzzleList = document.querySelector("#puzzle-list");
+				createPuzzleBtn = document.querySelector("#create-puzzle");
 
 		// Initialize image uploader
 		Uploader.init(dropZone, uploadImageBtn);
@@ -64,7 +63,7 @@
 
 			Puzzle.generatePuzzles(4, 4, function(generatedPuzzles) {
 				
-				Puzzle.drawPuzzles(generatedPuzzles, puzzleList);
+				Puzzle.drawPuzzles(generatedPuzzles, puzzleGame);
 				Puzzle.makePuzzlesDraggable();
 			});
 		};

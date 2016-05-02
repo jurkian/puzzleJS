@@ -72,22 +72,21 @@ $icon-font-path: '../fonts/';
 
 .puzzle-game {
   max-width: 100%;
+
+  /* Single puzzle */
+  & > img {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
 }
 
-.single-puzzle {
-
+.puzzle-highlight {
+  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.15);
 }
 
 .dz-highlight {
   box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.15);
-}
-
-.puzzle-list {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  max-width: 80%;
 }
 
 /* Puzzle dropzones */

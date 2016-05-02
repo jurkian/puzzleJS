@@ -17,36 +17,36 @@ var Puzzle = (function() {
 			if (tilesX === parseInt(tilesX, 10) && tilesY === parseInt(tilesY, 10)) {
 			
 				// Convert image (base64) to parts (single puzzles), using canvas
-			  var canvas = document.createElement("canvas"),
-			  		ctx = canvas.getContext("2d"),
-			  		imgParts = [],
-			  		singleWidth = img.width / tilesX,
-			  		singleHeight = img.height / tilesY;
+				var canvas = document.createElement("canvas"),
+						ctx = canvas.getContext("2d"),
+						imgParts = [],
+						singleWidth = img.width / tilesX,
+						singleHeight = img.height / tilesY;
 
-			  for (var y = 0; y < tilesY; y++) {
-			  	for (var x = 0; x < tilesX; x++) {
-		  			
-		  			canvas.width = singleWidth;
-		  			canvas.height = singleHeight;
-		  			
-		  			// ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-		  			// sx, sy = calculate dynamically (source image)
-		  			// dx, dy = 0 (we don't want to move the clipped image on new canvas)
-		  			ctx.drawImage(img, x * singleWidth, y * singleHeight, singleWidth, singleHeight, 0, 0, singleWidth, singleHeight);
+				for (var y = 0; y < tilesY; y++) {
+					for (var x = 0; x < tilesX; x++) {
+						
+						canvas.width = singleWidth;
+						canvas.height = singleHeight;
+						
+						// ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+						// sx, sy = calculate dynamically (source image)
+						// dx, dy = 0 (we don't want to move the clipped image on new canvas)
+						ctx.drawImage(img, x * singleWidth, y * singleHeight, singleWidth, singleHeight, 0, 0, singleWidth, singleHeight);
 
-			  		// Store the image data of each tile in the array
-			  		imgParts.push(canvas.toDataURL()); // ("image/jpeg") for jpeg
-			  	}
-			  }
+						// Store the image data of each tile in the array
+						imgParts.push(canvas.toDataURL()); // ("image/jpeg") for jpeg
+					}
+				}
 
-			  _drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
+				_drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
 
-			  // Randomize the puzzle images array
-			  imgParts = App.randomizeArray(imgParts);
+				// Randomize the puzzle images array
+				imgParts = App.randomizeArray(imgParts);
 
-			  if (typeof callback === 'function') {
-			  	callback(imgParts);
-			  }	
+				if (typeof callback === 'function') {
+					callback(imgParts);
+				}	
 
 			} else {
 				alert('Puzzle rows and columns can be only integers');
@@ -59,52 +59,102 @@ var Puzzle = (function() {
 	var _drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
 		var puzzleDropZoneEl = document.querySelector('#puzzle-game-dz');
 
-	  for (var y = 0; y < tilesY; y++) {
-	  	for (var x = 0; x < tilesX; x++) {
-  			
-  			var singleDz = document.createElement('div');
+		for (var y = 0; y < tilesY; y++) {
+			for (var x = 0; x < tilesX; x++) {
+				
+				var singleDz = document.createElement('div');
 
-  			singleDz.classList.add('single-puzzle-game-dz');
-  			singleDz.style.width = imgWidth + 'px';
-  			singleDz.style.height = imgHeight + 'px';
-  			
-  			puzzleDropZoneEl.appendChild(singleDz);
-	  	}
-	  }
+				singleDz.classList.add('single-puzzle-game-dz');
+				singleDz.style.width = imgWidth + 'px';
+				singleDz.style.height = imgHeight + 'px';
+				
+				puzzleDropZoneEl.appendChild(singleDz);
+			}
+		}
 	};
 
-	var drawPuzzles = function(generatedPuzzles, puzzleList) {
+	var drawPuzzles = function(generatedPuzzles, puzzleContainer) {
+		// How much area can the drawn puzzles take?
+		// Let it be 80% screen width
+		var w = window,
+				d = document,
+				e = d.documentElement,
+				g = d.getElementsByTagName('body')[0],
+				windowWidth = w.innerWidth || e.clientWidth || g.clientWidth,
+				maxContainerWidth = windowWidth * 0.8,
+				startingLeftPx = parseInt(windowWidth * 0.05, 10),
+				startingTopPx = startingLeftPx;
+
 		// Prepare and output puzzles
 		for (var i = 0, len = generatedPuzzles.length; i < len; i++) {
 			var singlePuzzle = document.createElement("img");
 			
 			singlePuzzle.src = generatedPuzzles[i];
 			singlePuzzle.setAttribute('draggable', true);
+			singlePuzzle.dataset.index = i+2;
+			singlePuzzle.style.left = startingLeftPx * (i+1) + 'px';
+			singlePuzzle.style.top = startingLeftPx * (i+1) + 'px';
 
-			puzzleList.appendChild(singlePuzzle);
+			puzzleContainer.appendChild(singlePuzzle);
 		}
 	};
 
 	var makePuzzlesDraggable = function() {
 
 		var puzzleDropZones = document.querySelectorAll('#puzzle-game-dz > div'),
-				puzzleDragEls = document.querySelectorAll('#puzzle-list img'),
-				elementDragged = null,
+				singlePuzzles = document.querySelectorAll('#puzzle-game > img'),
 				i = 0,
 				len = 0;
 
-		// Drop zone/puzzles event handling functions
-		var dzDragstart = function(e) {
+		// Single puzzles event handlers
+
+		// When the drag interaction starts
+		var puzzleDragstart = function(e) {
 			e.dataTransfer.effectAllowed = 'move';
-			e.dataTransfer.setData('text', this.innerHTML);
 
-			elementDragged = this;
+			// Highlight currently dragged puzzle
+			this.classList.add('puzzle-highlight');
+
+			// Send data: current puzzle x, y position and index
+			var style = window.getComputedStyle(e.target, null),
+					posX = parseInt(style.getPropertyValue("left"), 10) - e.clientX,
+					posY = parseInt(style.getPropertyValue("top"), 10) - e.clientY,
+					puzzleIndex = this.dataset.index;
+
+			e.dataTransfer.setData("text/plain", posX + ',' + posY + ',' + puzzleIndex);
 		};
 
-		var dzDragend = function(e) {
-			elementDragged = null;
+		// When the drag interaction finishes
+		var puzzleDragend = function(e) {
+			// Remove highlight 
+			this.classList.remove('puzzle-highlight');
 		};
 
+		// Body drag events
+		var bodyPuzzleDrop = function(e) { 
+			
+			var dPuzzleData = e.dataTransfer.getData("text/plain").split(','),
+					dPuzzleIndex = parseInt(dPuzzleData[2], 10),
+					dPuzzle = document.querySelector('#puzzle-game > img:nth-child(' + dPuzzleIndex + ')');
+
+			dPuzzle.style.left = (e.clientX + parseInt(dPuzzleData[0], 10)) + 'px';
+			dPuzzle.style.top = (e.clientY + parseInt(dPuzzleData[1], 10)) + 'px';
+
+			e.preventDefault();
+			return false;
+		};
+
+		var bodyDragOver = function(e) { 
+			e.preventDefault(); 
+			return false; 
+		};
+
+		document.body.addEventListener('drop', bodyPuzzleDrop, false);
+		document.body.addEventListener('dragover', bodyDragOver, false);
+
+		// Drop zone event handlers
+
+		// When the dragged element is over the drop zone
 		var dzDragover = function(e) {
 			e.preventDefault();
 			e.dataTransfer.dropEffect = 'move';
@@ -112,46 +162,37 @@ var Puzzle = (function() {
 			return false;
 		};
 
+		// When the dragged element enters the drop zone
 		var dzDragenter = function() {
 			this.classList.add('dz-highlight');
 		};
 
+		// When the dragged element leaves the drop zone
 		var dzDragleave = function() {
 			this.classList.remove('dz-highlight');
 		};
 
+		// When the dragged element dropped in the drop zone
 		var dzDrop = function(e) {
 			e.preventDefault();
-	  	e.stopPropagation();
+			e.stopPropagation();
 
 			this.classList.remove('dz-highlight');
 
 			return false;
 		};
 
-		// Events for draggable puzzles
-		for (i = 0, len = puzzleDragEls.length; i < len; i++) {
-
-			// When the drag interaction starts
-			puzzleDragEls[i].addEventListener('dragstart', dzDragstart);
-
-			// When the drag interaction finishes
-			puzzleDragEls[i].addEventListener('dragend', dzDragend);
+		// Attach events for draggable puzzles
+		for (i = 0, len = singlePuzzles.length; i < len; i++) {
+			singlePuzzles[i].addEventListener('dragstart', puzzleDragstart);
+			singlePuzzles[i].addEventListener('dragend', puzzleDragend);
 		}
 
-		// Events for puzzle drop zones
+		// Attach events for puzzle drop zones
 		for (i = 0, len = puzzleDropZones.length; i < len; i++) {
-
-			// When the dragged element is over the drop zone
 			puzzleDropZones[i].addEventListener('dragover', dzDragover);
-
-			// When the dragged element enters the drop zone
 			puzzleDropZones[i].addEventListener('dragenter', dzDragenter);
-
-			// When the dragged element leaves the drop zone
 			puzzleDropZones[i].addEventListener('dragleave', dzDragleave);
-
-			// Event Listener for when the dragged element dropped in the drop zone.
 			puzzleDropZones[i].addEventListener('drop', dzDrop);
 		}
 
