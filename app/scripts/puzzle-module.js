@@ -64,7 +64,7 @@ var Puzzle = (function() {
 				
 				var singleDz = document.createElement('div');
 
-				singleDz.classList.add('single-puzzle-game-dz');
+				singleDz.classList.add('puzzle-game-dz-single');
 				singleDz.style.width = imgWidth + 'px';
 				singleDz.style.height = imgHeight + 'px';
 				
