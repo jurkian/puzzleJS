@@ -1,8 +1,13 @@
 var App = (function() {
 
-	var randomizeArray = function(o) {
-		for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-		return o;
+	var isNewAPISupported = function() {
+		var features = {
+			'fr': (typeof FileReader !== 'undefined'),
+			'drag': ('draggable' in document.createElement('span') !== false),
+			'canvas': !!document.createElement('canvas').getContext
+		};
+
+		return (features.fr && features.drag && features.canvas);
 	};
 
 	var changeView = function(newView, beforeShowingNew, callback) {
@@ -40,9 +45,16 @@ var App = (function() {
 		
 	};
 
+	// Tools
+	var randomizeArray = function(o) {
+		for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+		return o;
+	};
+
 	return {
-		randomizeArray: randomizeArray,
-		changeView: changeView
+		isNewAPISupported: isNewAPISupported,
+		changeView: changeView,
+		randomizeArray: randomizeArray
 	};
 
 })();

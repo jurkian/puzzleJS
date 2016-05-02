@@ -2,8 +2,8 @@
 
 	var init = function() {
 
-		// Detect if browser supports drag and drop and FileReader APIs
-		if (typeof FileReader === 'undefined' && 'draggable' in document.createElement('span') === false ) {
+		// Detect if browser supports new HTML5 APIs
+		if (!App.isNewAPISupported()) {
 			alert('Make sure your browser is up to date. Consider using Chrome or Firefox.');
 		}
 
