@@ -18,9 +18,9 @@
 		Uploader.init(dropZone, uploadImageBtn);
 
 		// Handle other drop events
-		dropZone.addEventListener('dragenter', Uploader.addHover, false);
-		dropZone.addEventListener('dragleave', Uploader.removeHover, false);
-		dropZone.addEventListener('dragover', Uploader.cancelDefault, false);
+		document.body.addEventListener('dragenter', Uploader.addHover, false);
+		document.body.addEventListener('dragleave', Uploader.removeHover, false);
+		document.body.addEventListener('dragover', Uploader.cancelDefault, false);
 
 		// Handle image drop event
 		var handleImageDrop = function(e) {
@@ -31,6 +31,15 @@
 				// User uploaded an image
 				// Go to puzzle preview
 				App.changeView(puzzlePreview, function() {
+
+					// Before it happens, remove events from body
+					// We no longer need it to handle img uploading
+					var b = document.body;
+					b.removeEventListener('dragenter', Uploader.addHover);
+					b.removeEventListener('dragleave', Uploader.removeHover);
+					b.removeEventListener('dragover', Uploader.cancelDefault);
+					b.removeEventListener('drop', handleImageDrop);
+
 					// Show uploaded image preview
 					var img = document.querySelector('#puzzle-preview img');
 					img.src = imageCode;
@@ -39,7 +48,7 @@
 
 		};
 
-		dropZone.addEventListener('drop', handleImageDrop, false);
+		document.body.addEventListener('drop', handleImageDrop, false);
 		uploadImageBtn.addEventListener('change', handleImageDrop, false);
 
 		// User decided to create puzzles
