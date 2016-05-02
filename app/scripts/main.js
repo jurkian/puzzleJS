@@ -61,7 +61,7 @@
 			// Initialize puzzle game
 			Puzzle.init(imageCode);
 
-			Puzzle.generatePuzzles(2, 2, function(puzzleCodes) {
+			Puzzle.generatePuzzles(4, 4, function(puzzleCodes) {
 				Puzzle.drawPuzzles(puzzleCodes, puzzleGame);
 				Puzzle.makePuzzlesDraggable();
 			});

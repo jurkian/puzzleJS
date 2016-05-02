@@ -128,6 +128,7 @@ var Puzzle = (function() {
 
 			// Highlight currently dragged puzzle
 			this.classList.add('puzzle-highlight');
+			this.style.zIndex = '99';
 
 			// Send data: current puzzle x, y position and index
 			var style = window.getComputedStyle(e.target, null),
@@ -149,7 +150,7 @@ var Puzzle = (function() {
 			
 			var dPuzzleData = e.dataTransfer.getData("text/plain").split(','),
 					dPuzzleIndex = parseInt(dPuzzleData[2], 10),
-					dPuzzle = document.querySelector('#puzzle-game > img:nth-child(' + dPuzzleIndex + 'n)');
+					dPuzzle = document.querySelector('#puzzle-game > img[data-index="' + dPuzzleIndex + '"]');
 
 			dPuzzle.style.left = (e.clientX + parseInt(dPuzzleData[0], 10)) + 'px';
 			dPuzzle.style.top = (e.clientY + parseInt(dPuzzleData[1], 10)) + 'px';
@@ -196,7 +197,7 @@ var Puzzle = (function() {
 
 			var dPuzzleData = e.dataTransfer.getData("text/plain").split(','),
 					dPuzzleIndex = parseInt(dPuzzleData[2], 10),
-					dImage = document.querySelector('#puzzle-game > img:nth-child(' + dPuzzleIndex + 'n)');
+					dImage = document.querySelector('#puzzle-game > img[data-index="' + dPuzzleIndex + '"]');
 
 			// Handle puzzle guesses
 			if (parseInt(this.dataset.correctId, 10) === dPuzzleIndex) {
@@ -234,7 +235,7 @@ var Puzzle = (function() {
 	};
 
 	var _incorrectPuzzleDrop = function() {
-		alert('Try again');
+		
 	};
 
 	return {
