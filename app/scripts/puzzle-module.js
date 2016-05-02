@@ -41,9 +41,6 @@ var Puzzle = (function() {
 
 				_drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
 
-				// Randomize the puzzle images array
-				imgParts = App.randomizeArray(imgParts);
-
 				if (typeof callback === 'function') {
 					callback(imgParts);
 				}	
@@ -60,13 +57,16 @@ var Puzzle = (function() {
 		var puzzleDropZoneEl = document.querySelector('#puzzle-game-dz'),
 				i = 0;
 
+		// Set drop zone width
+		puzzleDropZoneEl.style.width = tilesX * imgWidth + 'px';
+
 		for (var y = 0; y < tilesY; y++) {
 			for (var x = 0; x < tilesX; x++) {
 				
 				var singleDz = document.createElement('div');
 
 				singleDz.classList.add('puzzle-game-dz-single');
-				singleDz.dataset.correctId = i+2;
+				singleDz.dataset.correctId = i+1;
 				singleDz.style.width = imgWidth + 'px';
 				singleDz.style.height = imgHeight + 'px';
 				
@@ -76,7 +76,7 @@ var Puzzle = (function() {
 		}
 	};
 
-	var drawPuzzles = function(generatedPuzzles, puzzleContainer) {
+	var drawPuzzles = function(puzzleCodes, puzzleContainer) {
 		// How much area can the drawn puzzles take?
 		// Let it be 80% screen width
 		var w = window,
@@ -86,19 +86,30 @@ var Puzzle = (function() {
 				windowWidth = w.innerWidth || e.clientWidth || g.clientWidth,
 				maxContainerWidth = windowWidth * 0.8,
 				startingLeftPx = parseInt(windowWidth * 0.05, 10),
-				startingTopPx = startingLeftPx;
+				startingTopPx = startingLeftPx,
+				generatedImages = [],
+				i = 0,
+				len = 0;
 
-		// Prepare and output puzzles
-		for (var i = 0, len = generatedPuzzles.length; i < len; i++) {
-			var singlePuzzle = document.createElement("img");
+		// Prepare puzzle elements
+		for (i = 0, len = puzzleCodes.length; i < len; i++) {
+			var singlePuzzle = document.createElement('img');
 			
-			singlePuzzle.src = generatedPuzzles[i];
+			singlePuzzle.src = puzzleCodes[i];
 			singlePuzzle.setAttribute('draggable', true);
-			singlePuzzle.dataset.index = i+2;
+			singlePuzzle.dataset.index = i+1;
 			singlePuzzle.style.left = startingLeftPx * (i+1) + 'px';
 			singlePuzzle.style.top = startingLeftPx * (i+1) + 'px';
 
-			puzzleContainer.appendChild(singlePuzzle);
+			generatedImages.push(singlePuzzle);
+		}
+
+		// Randomize the puzzles
+		generatedImages = App.randomizeArray(generatedImages);
+
+		// Show ready images on screen
+		for (i = 0, len = generatedImages.length; i < len; i++) {
+			puzzleContainer.appendChild(generatedImages[i]);
 		}
 	};
 
@@ -138,7 +149,7 @@ var Puzzle = (function() {
 			
 			var dPuzzleData = e.dataTransfer.getData("text/plain").split(','),
 					dPuzzleIndex = parseInt(dPuzzleData[2], 10),
-					dPuzzle = document.querySelector('#puzzle-game > img:nth-child(' + dPuzzleIndex + ')');
+					dPuzzle = document.querySelector('#puzzle-game > img:nth-child(' + dPuzzleIndex + 'n)');
 
 			dPuzzle.style.left = (e.clientX + parseInt(dPuzzleData[0], 10)) + 'px';
 			dPuzzle.style.top = (e.clientY + parseInt(dPuzzleData[1], 10)) + 'px';
@@ -185,8 +196,7 @@ var Puzzle = (function() {
 
 			var dPuzzleData = e.dataTransfer.getData("text/plain").split(','),
 					dPuzzleIndex = parseInt(dPuzzleData[2], 10),
-					dImage = document.querySelector('#puzzle-game > img:nth-child(' + dPuzzleIndex + ')'),
-					d;
+					dImage = document.querySelector('#puzzle-game > img:nth-child(' + dPuzzleIndex + 'n)');
 
 			// Handle puzzle guesses
 			if (parseInt(this.dataset.correctId, 10) === dPuzzleIndex) {
