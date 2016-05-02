@@ -57,7 +57,8 @@ var Puzzle = (function() {
 	};
 
 	var _drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
-		var puzzleDropZoneEl = document.querySelector('#puzzle-game-dz');
+		var puzzleDropZoneEl = document.querySelector('#puzzle-game-dz'),
+				i = 0;
 
 		for (var y = 0; y < tilesY; y++) {
 			for (var x = 0; x < tilesX; x++) {
@@ -65,10 +66,12 @@ var Puzzle = (function() {
 				var singleDz = document.createElement('div');
 
 				singleDz.classList.add('puzzle-game-dz-single');
+				singleDz.dataset.correctId = i+2;
 				singleDz.style.width = imgWidth + 'px';
 				singleDz.style.height = imgHeight + 'px';
 				
 				puzzleDropZoneEl.appendChild(singleDz);
+				i++;
 			}
 		}
 	};
@@ -177,7 +180,20 @@ var Puzzle = (function() {
 			e.preventDefault();
 			e.stopPropagation();
 
+			// Remove drop zone highlight
 			this.classList.remove('dz-highlight');
+
+			var dPuzzleData = e.dataTransfer.getData("text/plain").split(','),
+					dPuzzleIndex = parseInt(dPuzzleData[2], 10),
+					dImage = document.querySelector('#puzzle-game > img:nth-child(' + dPuzzleIndex + ')'),
+					d;
+
+			// Handle puzzle guesses
+			if (parseInt(this.dataset.correctId, 10) === dPuzzleIndex) {
+				_correctPuzzleDrop(dImage, this);
+			} else {
+				_incorrectPuzzleDrop();
+			}
 
 			return false;
 		};
@@ -196,6 +212,19 @@ var Puzzle = (function() {
 			puzzleDropZones[i].addEventListener('drop', dzDrop);
 		}
 
+	};
+
+	var _correctPuzzleDrop = function(image, dropZone) {
+		// Show the guessed puzzle on single drop zone
+		var imageSrc = image.src;
+		dropZone.style.background = 'url(' + imageSrc + ')';
+
+		// Remove the guessed puzzle
+		document.querySelector('#puzzle-game').removeChild(image);
+	};
+
+	var _incorrectPuzzleDrop = function() {
+		alert('Try again');
 	};
 
 	return {
