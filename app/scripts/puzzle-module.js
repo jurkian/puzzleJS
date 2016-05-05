@@ -54,7 +54,7 @@ var Puzzle = (function() {
 	};
 
 	var _drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
-		var puzzleDropZoneEl = document.querySelector('#puzzle-game-dz'),
+		var puzzleDropZoneEl = document.querySelector('#puzzle-dropzones'),
 				i = 0;
 
 		// Set drop zone width
@@ -65,7 +65,7 @@ var Puzzle = (function() {
 				
 				var singleDz = document.createElement('div');
 
-				singleDz.classList.add('puzzle-game-dz-single');
+				singleDz.classList.add('puzzle-dropzone-single');
 				singleDz.dataset.correctId = i+1;
 				singleDz.style.width = imgWidth + 'px';
 				singleDz.style.height = imgHeight + 'px';
@@ -116,7 +116,7 @@ var Puzzle = (function() {
 
 	var makePuzzlesDraggable = function() {
 
-		var puzzleDropZones = document.querySelectorAll('#puzzle-game-dz > div'),
+		var puzzleDropZones = document.querySelectorAll('#puzzle-dropzones > div'),
 				singlePuzzles = document.querySelectorAll('#puzzle-game > img'),
 				i = 0,
 				len = 0;
