@@ -9,10 +9,11 @@
 
 		var dropZone = document.querySelector('#drop-zone'),
 				puzzlePreview = document.querySelector('#puzzle-preview'),
-				puzzleGame = document.querySelector("#puzzle-game"),
-				uploadImageBtn = document.querySelector("#upload-image"),
+				puzzleGame = document.querySelector('#puzzle-game'),
+				puzzleList = document.querySelector('#puzzle-list'),
+				uploadImageBtn = document.querySelector('#upload-image'),
 				imageCode = '',
-				createPuzzleBtn = document.querySelector("#create-puzzle");
+				createPuzzleBtn = document.querySelector('#create-puzzle');
 
 		// Initialize image uploader
 		Uploader.init(dropZone, uploadImageBtn);
@@ -71,7 +72,7 @@
 			Puzzle.init(imageCode);
 
 			Puzzle.generatePuzzles(4, 4, function(puzzleCodes) {
-				Puzzle.drawPuzzles(puzzleCodes, puzzleGame);
+				Puzzle.drawPuzzles(puzzleCodes, puzzleList);
 				Puzzle.makePuzzlesDraggable();
 			});
 		};

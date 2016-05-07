@@ -1,55 +1,97 @@
 var Puzzle = (function() {
 
-	var _imageCode = '';
+	var _imageCode = '',
+			w = window,
+			d = document,
+			e = d.documentElement,
+			g = d.getElementsByTagName('body')[0],
+			windowWidth = w.innerWidth || e.clientWidth || g.clientWidth;
 
 	var init = function(imageCode) {
 		_imageCode = imageCode;
 	};
 		 
 	var generatePuzzles = function(tilesX, tilesY, callback) {
-		
-		// Prepare image to split into parts
-		var img = new Image();
 
-		img.src = _imageCode;
-		img.onload = function() {
+		if (tilesX === parseInt(tilesX, 10) && tilesY === parseInt(tilesY, 10)) {
 
-			if (tilesX === parseInt(tilesX, 10) && tilesY === parseInt(tilesY, 10)) {
-			
-				// Convert image (base64) to parts (single puzzles), using canvas
-				var canvas = document.createElement("canvas"),
-						ctx = canvas.getContext("2d"),
-						imgParts = [],
-						singleWidth = img.width / tilesX,
-						singleHeight = img.height / tilesY;
+			// Resize the image proportionally
+			var img = new Image(),
+					puzzleGameEl = document.querySelector('#puzzle-game'),
+					resizedImgCode = '';
 
-				for (var y = 0; y < tilesY; y++) {
-					for (var x = 0; x < tilesX; x++) {
-						
-						canvas.width = singleWidth;
-						canvas.height = singleHeight;
-						
-						// ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-						// sx, sy = calculate dynamically (source image)
-						// dx, dy = 0 (we don't want to move the clipped image on new canvas)
-						ctx.drawImage(img, x * singleWidth, y * singleHeight, singleWidth, singleHeight, 0, 0, singleWidth, singleHeight);
+			_resizeUploadedImage(_imageCode, 900, function(resizedImgCode) {
+				// Prepare image to split into parts
+				img.src = resizedImgCode;
+				img.onload = function() {
 
-						// Store the image data of each tile in the array
-						imgParts.push(canvas.toDataURL()); // ("image/jpeg") for jpeg
+					// Convert image (base64) to parts (single puzzles), using canvas
+					var canvas = document.createElement('canvas'),
+							ctx = canvas.getContext('2d'),
+							imgParts = [],
+							singleWidth = img.width / tilesX,
+							singleHeight = img.height / tilesY;
+
+					for (var y = 0; y < tilesY; y++) {
+						for (var x = 0; x < tilesX; x++) {
+							
+							canvas.width = singleWidth;
+							canvas.height = singleHeight;
+							
+							// ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+							// sx, sy = calculate dynamically (source image)
+							// dx, dy = 0 (we don't want to move the clipped image on new canvas)
+							ctx.drawImage(img, x * singleWidth, y * singleHeight, singleWidth, singleHeight, 0, 0, singleWidth, singleHeight);
+
+							// Store the image data of each tile in the array
+							imgParts.push(canvas.toDataURL());
+						}
 					}
-				}
 
-				_drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
+					_drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
+
+					if (typeof callback === 'function') {
+						callback(imgParts);
+					}
+				};
+			});
+
+		} else {
+			alert('Puzzle rows and columns can be only integers');
+			return false;
+		}
+
+	};
+
+	var _resizeUploadedImage = function(imageCode, width, callback) {
+		// create an off-screen canvas
+		var canvas = document.createElement('canvas'),
+		    ctx = canvas.getContext('2d'),
+		    img = new Image();
+
+    img.src = imageCode;
+    img.onload = function() {
+
+    	// If the image doesn't need to be resized (has less width than targeted)
+    	// return the imageCode
+    	if (img.width < width) {
+    		
+    		if (typeof callback === 'function') {
+    			callback(imageCode);
+    		}
+
+    	} else {
+				// Set its width to target one
+				canvas.width = width;
+				canvas.height = canvas.width * (img.height / img.width);
+
+				// Draw source image into the off-screen canvas:
+				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
 				if (typeof callback === 'function') {
-					callback(imgParts);
-				}	
-
-			} else {
-				alert('Puzzle rows and columns can be only integers');
-				return false;
+					callback(canvas.toDataURL());
+				}
 			}
-
 		};
 	};
 
@@ -57,15 +99,11 @@ var Puzzle = (function() {
 		var puzzleDropZoneEl = document.querySelector('#puzzle-dropzones'),
 				i = 0;
 
-		// Set drop zone width
-		puzzleDropZoneEl.style.width = tilesX * imgWidth + 'px';
-
 		for (var y = 0; y < tilesY; y++) {
 			for (var x = 0; x < tilesX; x++) {
 				
 				var singleDz = document.createElement('div');
 
-				singleDz.classList.add('puzzle-dropzone-single');
 				singleDz.dataset.correctId = i+1;
 				singleDz.style.width = imgWidth + 'px';
 				singleDz.style.height = imgHeight + 'px';
@@ -77,17 +115,8 @@ var Puzzle = (function() {
 	};
 
 	var drawPuzzles = function(puzzleCodes, puzzleContainer) {
-		// How much area can the drawn puzzles take?
-		// Let it be 80% screen width
-		var w = window,
-				d = document,
-				e = d.documentElement,
-				g = d.getElementsByTagName('body')[0],
-				windowWidth = w.innerWidth || e.clientWidth || g.clientWidth,
-				maxContainerWidth = windowWidth * 0.8,
-				startingLeftPx = parseInt(windowWidth * 0.05, 10),
-				startingTopPx = startingLeftPx,
-				generatedImages = [],
+
+		var generatedImages = [],
 				i = 0,
 				len = 0;
 
@@ -107,9 +136,6 @@ var Puzzle = (function() {
 
 		// Show ready images on screen
 		for (i = 0, len = generatedImages.length; i < len; i++) {
-			generatedImages[i].style.left = startingLeftPx * (i+1) + 'px';
-			generatedImages[i].style.top = startingLeftPx * (i+1) + 'px';
-
 			puzzleContainer.appendChild(generatedImages[i]);
 		}
 	};
@@ -117,7 +143,7 @@ var Puzzle = (function() {
 	var makePuzzlesDraggable = function() {
 
 		var puzzleDropZones = document.querySelectorAll('#puzzle-dropzones > div'),
-				singlePuzzles = document.querySelectorAll('#puzzle-game > img'),
+				singlePuzzles = document.querySelectorAll('#puzzle-list > img'),
 				i = 0,
 				len = 0;
 
@@ -133,11 +159,11 @@ var Puzzle = (function() {
 
 			// Send data: current puzzle x, y position and index
 			var style = window.getComputedStyle(e.target, null),
-					posX = parseInt(style.getPropertyValue("left"), 10) - e.clientX,
-					posY = parseInt(style.getPropertyValue("top"), 10) - e.clientY,
+					posX = parseInt(style.getPropertyValue('left'), 10) - e.clientX,
+					posY = parseInt(style.getPropertyValue('top'), 10) - e.clientY,
 					puzzleIndex = this.dataset.index;
 
-			e.dataTransfer.setData("text/plain", posX + ',' + posY + ',' + puzzleIndex);
+			e.dataTransfer.setData('text/plain', posX + ',' + posY + ',' + puzzleIndex);
 		};
 
 		// When the drag interaction finishes
@@ -147,11 +173,11 @@ var Puzzle = (function() {
 		};
 
 		// Body drag events
-		var bodyPuzzleDrop = function(e) { 
+		var bodyPuzzleDrop = function(e) {
 			
-			var dPuzzleData = e.dataTransfer.getData("text/plain").split(','),
+			var dPuzzleData = e.dataTransfer.getData('text/plain').split(','),
 					dPuzzleIndex = parseInt(dPuzzleData[2], 10),
-					dPuzzle = document.querySelector('#puzzle-game > img[data-index="' + dPuzzleIndex + '"]');
+					dPuzzle = document.querySelector('#puzzle-list > img[data-index="' + dPuzzleIndex + '"]');
 
 			dPuzzle.style.left = (e.clientX + parseInt(dPuzzleData[0], 10)) + 'px';
 			dPuzzle.style.top = (e.clientY + parseInt(dPuzzleData[1], 10)) + 'px';
@@ -196,9 +222,9 @@ var Puzzle = (function() {
 			// Remove drop zone highlight
 			this.classList.remove('dz-highlight');
 
-			var dPuzzleData = e.dataTransfer.getData("text/plain").split(','),
+			var dPuzzleData = e.dataTransfer.getData('text/plain').split(','),
 					dPuzzleIndex = parseInt(dPuzzleData[2], 10),
-					dImage = document.querySelector('#puzzle-game > img[data-index="' + dPuzzleIndex + '"]');
+					dImage = document.querySelector('#puzzle-list > img[data-index="' + dPuzzleIndex + '"]');
 
 			// Handle puzzle guesses
 			if (parseInt(this.dataset.correctId, 10) === dPuzzleIndex) {
@@ -241,7 +267,7 @@ var Puzzle = (function() {
 		dropZone.style.background = 'url(' + imageSrc + ')';
 
 		// Remove the guessed puzzle
-		document.querySelector('#puzzle-game').removeChild(image);
+		document.querySelector('#puzzle-list').removeChild(image);
 
 		// Remove event listeners from the drop zone
 		// To prevent dropping images on it
@@ -252,9 +278,7 @@ var Puzzle = (function() {
 		}
 	};
 
-	var _incorrectPuzzleDrop = function() {
-		
-	};
+	var _incorrectPuzzleDrop = function() {};
 
 	return {
 		init: init,

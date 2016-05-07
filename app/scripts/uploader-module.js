@@ -9,11 +9,11 @@ var Uploader = (function() {
 	};
 	
 	var addHover = function() {
-		_dropZone.classList.add("drag-over");
+		_dropZone.classList.add('drag-over');
 	};
 
 	var removeHover = function() {
-		_dropZone.classList.remove("drag-over");
+		_dropZone.classList.remove('drag-over');
 	};
 
 	var handleDrop = function(e, callback) {
