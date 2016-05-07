@@ -20,7 +20,7 @@ var Puzzle = (function() {
 					puzzleGameEl = document.querySelector('#puzzle-game'),
 					resizedImgCode = '';
 
-			_resizeUploadedImage(_imageCode, 900, function(resizedImgCode) {
+			_resizeUploadedImage(_imageCode, windowWidth, function(resizedImgCode) {
 				// Prepare image to split into parts
 				img.src = resizedImgCode;
 				img.onload = function() {
@@ -63,31 +63,34 @@ var Puzzle = (function() {
 
 	};
 
-	var _resizeUploadedImage = function(imageCode, width, callback) {
-		// create an off-screen canvas
+	var _resizeUploadedImage = function(imageCode, wWidth, callback) {
+		// Resize the image so that it fits the 47.5% of screen width
+		// The rest is 5% free space and 47.5% for puzzle dropzones
 		var canvas = document.createElement('canvas'),
 		    ctx = canvas.getContext('2d'),
-		    img = new Image();
+		    img = new Image(),
+		    targetImageWidth = wWidth * 0.475;
 
     img.src = imageCode;
     img.onload = function() {
 
     	// If the image doesn't need to be resized (has less width than targeted)
     	// return the imageCode
-    	if (img.width < width) {
+    	if (img.width < targetImageWidth) {
     		
     		if (typeof callback === 'function') {
     			callback(imageCode);
     		}
 
     	} else {
-				// Set its width to target one
-				canvas.width = width;
+				// Set image size basing on target width
+				canvas.width = targetImageWidth;
 				canvas.height = canvas.width * (img.height / img.width);
 
-				// Draw source image into the off-screen canvas:
+				// Draw source image into the off-screen canvas
 				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
+				// Send a callback with base64 coded new image
 				if (typeof callback === 'function') {
 					callback(canvas.toDataURL());
 				}
