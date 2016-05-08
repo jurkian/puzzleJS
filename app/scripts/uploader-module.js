@@ -1,19 +1,26 @@
 var Uploader = (function() {
 
-	var dropZoneEl = '',
-			uploadBtnEl = '';
+	var uploadDropZoneView = '',
+			uploadInput = '',
+			uploadOverClass = '';
 
-	var init = function(dropZone, uploadBtn) {
-		dropZoneEl = dropZone;
-		uploadBtnEl = uploadBtn;
+	var init = function(settings) {
+		var s = settings;
+
+		uploadDropZoneView = s.uploadDropZoneView;
+		uploadInput = s.uploadInput;
+		uploadOverClass = s.uploadOverClass;
+
+		// Add drag and drop events
+		addDragEvents();
 	};
 	
 	var addHover = function() {
-		dropZoneEl.classList.add('drag-over');
+		uploadDropZoneView.classList.add(uploadOverClass);
 	};
 
 	var removeHover = function() {
-		dropZoneEl.classList.remove('drag-over');
+		uploadDropZoneView.classList.remove(uploadOverClass);
 	};
 
 	var getDroppedImage = function(e, callback) {
@@ -24,7 +31,6 @@ var Uploader = (function() {
 			return callback(imageBase64);
 		});
 
-		addDragEvents();
 		removeHover();
 	};
 
@@ -36,7 +42,7 @@ var Uploader = (function() {
 			// Detect if user uploaded the image using drag and drop or file input method
 			var uploadedFile = '';
 
-			uploadedFile = (e.type === 'drop') ? e.dataTransfer.files : uploadBtnEl.files;
+			uploadedFile = (e.type === 'drop') ? e.dataTransfer.files : uploadInput.files;
 
 			if (uploadedFile.length !== 1) {
 				alert('You can upload only 1 image - Try again');

@@ -21,7 +21,7 @@ $icon-font-path: '../fonts/';
   cursor: move;
 }
 
-.drop-zone, .puzzle-preview, .puzzle-game {
+.upload-drop-zone, .puzzle-preview, .puzzle-game {
   max-width: 80%;
   width: 100%;
   display: flex;
@@ -40,14 +40,14 @@ $icon-font-path: '../fonts/';
   }
 }
 
-.drop-zone, .puzzle-preview {
+.upload-drop-zone, .puzzle-preview {
   padding: 15px;
   height: 100%;
 }
 
 /* Drop zone */
 
-.drop-zone {
+.upload-drop-zone {
   max-height: 60%;
   
   &.drag-over {
@@ -125,7 +125,7 @@ $icon-font-path: '../fonts/';
 
 /* Responsive views */
 @media screen and (max-width: 800px) {
-  .drop-zone {
+  .upload-drop-zone {
     > form {
       display: none;
     }

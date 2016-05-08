@@ -7,13 +7,32 @@
 			alert('Make sure your browser is up to date. Consider using Chrome or Firefox.');
 		}
 
-		var dropZone = document.querySelector('#drop-zone'),
-				puzzlePreview = document.querySelector('#puzzle-preview'),
-				puzzleGame = document.querySelector('#puzzle-game'),
-				puzzleList = document.querySelector('#puzzle-list'),
-				uploadImageBtn = document.querySelector('#upload-image'),
-				imageCode = '',
-				createPuzzleBtn = document.querySelector('#create-puzzle');
+		var d = document,
+				s = '';
+
+		var	settings = {
+				/* Views */
+				uploadDropZoneView: d.querySelector('#upload-drop-zone'),
+				puzzlePreviewView: d.querySelector('#puzzle-preview'),
+				puzzleGameView: d.querySelector('#puzzle-game'),
+
+				/* 1. Upload */
+				uploadInput: d.querySelector('#upload-input'),
+				uploadImageBase64: '',
+				uploadOverClass: 'drag-over',
+
+				/* 2. Preview */
+				createPuzzleBtn: d.querySelector('#create-puzzle'),
+				puzzlePreviewImgEl: d.querySelector('#puzzle-preview img'),
+
+				/* 3. Game */
+				puzzleListEl: d.querySelector('#puzzle-list'),
+				puzzleDropZonesEl: d.querySelector('#puzzle-dropzones'),
+				draggedPuzzleHlClass: 'puzzle-highlight',
+				dropZoneEnterClass: 'dz-highlight'
+			};
+
+		s = settings;
 
 		/**
 		 * View 1
@@ -21,32 +40,32 @@
 		 */
 		
 		// Initialize image uploader
-		Uploader.init(dropZone, uploadImageBtn);
+		Uploader.init(settings);
 
 		// User uploaded an image
 		var handleImageDrop = function(e) {
 			Uploader.getDroppedImage(e, function(image) {
-				imageCode = image;
+				s.uploadImageBase64 = image;
 
 				// Go to puzzle preview
-				App.changeView(puzzlePreview, function() {
+				App.changeView(s.puzzlePreviewView, function() {
 
 					// Before it happens, remove events from body
 					// We no longer need it to handle img uploading
 					Uploader.removeDragEvents();
 					document.body.removeEventListener('drop', handleImageDrop);
-					uploadImageBtn.removeEventListener('change', handleImageDrop);
+					s.uploadInput.removeEventListener('change', handleImageDrop);
 
 					// Show uploaded image preview
-					var img = document.querySelector('#puzzle-preview img');
-					img.src = imageCode;
+					var img = s.puzzlePreviewImgEl;
+					img.src = s.uploadImageBase64;
 				});
 			});
 		};
 		
 		// Add image drop/file upload listeners
 		document.body.addEventListener('drop', handleImageDrop, false);
-		uploadImageBtn.addEventListener('change', handleImageDrop, false);
+		s.uploadInput.addEventListener('change', handleImageDrop, false);
 
 		/**
 		 * View 2
@@ -57,14 +76,14 @@
 		// Go to puzzle game
 		var gotoPuzzleGame = function() {
 
-			App.changeView(puzzleGame, function() {
+			App.changeView(s.puzzleGameView, function() {
 				document.querySelector('.wrapper').classList.add('game-wrapper');
 			}, function() {
 				handlePuzzleGame();
 			});
 		};
 
-		createPuzzleBtn.addEventListener('click', gotoPuzzleGame, false);
+		s.createPuzzleBtn.addEventListener('click', gotoPuzzleGame, false);
 		
 		/**
 		 * View 3
@@ -75,11 +94,11 @@
 		var handlePuzzleGame = function() {
 
 			// Initialize puzzle game
-			Puzzle.init(imageCode);
+			Puzzle.init(settings);
 
 			Puzzle.generatePuzzles(4, 4)
 			.then(function(puzzleCodes) {
-				Puzzle.drawPuzzles(puzzleCodes, puzzleList);
+				Puzzle.drawPuzzles(puzzleCodes, s.puzzleListEl);
 				Puzzle.makePuzzlesDraggable();
 			});
 		};

@@ -1,14 +1,24 @@
 var Puzzle = (function() {
 
-	var imageCode = '',
-		w = window,
-		d = document,
-		e = d.documentElement,
-		g = d.getElementsByTagName('body')[0],
-		windowWidth = w.innerWidth || e.clientWidth || g.clientWidth;
+	var uploadImageBase64 = '',
+			puzzleListEl = '',
+			puzzleDropZonesEl = '',
+			draggedPuzzleHlClass = '',
+			dropZoneEnterClass = '',
+			w = window,
+			d = document,
+			e = d.documentElement,
+			g = d.getElementsByTagName('body')[0],
+			windowWidth = w.innerWidth || e.clientWidth || g.clientWidth;
 
-	var init = function(code) {
-		imageCode = code;
+	var init = function(settings) {
+		var s = settings;
+
+		uploadImageBase64 = s.uploadImageBase64;
+		puzzleListEl = s.puzzleListEl;
+		puzzleDropZonesEl = s.puzzleDropZonesEl;
+		draggedPuzzleHlClass = s.draggedPuzzleHlClass;
+		dropZoneEnterClass = s.dropZoneEnterClass;
 	};
 
 	// Generate puzzles basing on chosen X and Y tiles amount
@@ -20,7 +30,7 @@ var Puzzle = (function() {
 
 				var resizedImageParts = [];
 
-				resizeUploadedImage(imageCode, windowWidth)
+				resizeUploadedImage(uploadImageBase64, windowWidth)
 				.then(function(resizedImgCode) {
 					return splitImageIntoParts(resizedImgCode, tilesX, tilesY);
 				}).then(function(parts) {
@@ -116,8 +126,7 @@ var Puzzle = (function() {
 	};
 
 	var drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
-		var puzzleDropZoneEl = document.querySelector('#puzzle-dropzones'),
-				i = 0;
+		var i = 0;
 
 		return new Promise(function(resolve, reject) {
 			for (var y = 0; y < tilesY; y++) {
@@ -129,7 +138,7 @@ var Puzzle = (function() {
 					singleDz.style.width = imgWidth + 'px';
 					singleDz.style.height = imgHeight + 'px';
 					
-					puzzleDropZoneEl.appendChild(singleDz);
+					puzzleDropZonesEl.appendChild(singleDz);
 					i++;
 				}
 			}
@@ -179,7 +188,7 @@ var Puzzle = (function() {
 		e.dataTransfer.effectAllowed = 'move';
 
 		// Highlight currently dragged puzzle
-		this.classList.add('puzzle-highlight');
+		this.classList.add(draggedPuzzleHlClass);
 		this.style.zIndex = '99';
 
 		// Send data: current puzzle x, y position and index
@@ -194,7 +203,7 @@ var Puzzle = (function() {
 	// When the drag interaction finishes
 	gameEvents.puzzleDragend = function(e) {
 		// Remove highlight 
-		this.classList.remove('puzzle-highlight');
+		this.classList.remove(draggedPuzzleHlClass);
 	};
 
 	/**
@@ -204,12 +213,12 @@ var Puzzle = (function() {
 	gameEvents.bodyPuzzleDrop = function(e) {
 		e.preventDefault();
 		
-		var dPuzzleData = e.dataTransfer.getData('text/plain').split(','),
-				dPuzzleIndex = parseInt(dPuzzleData[2], 10),
-				dPuzzle = document.querySelector('#puzzle-list > img[data-index="' + dPuzzleIndex + '"]');
+		var dropPuzzleData = e.dataTransfer.getData('text/plain').split(','),
+				dropPuzzleIndex = parseInt(dropPuzzleData[2], 10),
+				dropPuzzle = puzzleListEl.querySelector('img[data-index="' + dropPuzzleIndex + '"]');
 
-		dPuzzle.style.left = (e.clientX + parseInt(dPuzzleData[0], 10)) + 'px';
-		dPuzzle.style.top = (e.clientY + parseInt(dPuzzleData[1], 10)) + 'px';
+		dropPuzzle.style.left = (e.clientX + parseInt(dropPuzzleData[0], 10)) + 'px';
+		dropPuzzle.style.top = (e.clientY + parseInt(dropPuzzleData[1], 10)) + 'px';
 
 		return false;
 	};
@@ -233,12 +242,12 @@ var Puzzle = (function() {
 
 	// When the dragged element enters the drop zone
 	gameEvents.dzDragenter = function() {
-		this.classList.add('dz-highlight');
+		this.classList.add(dropZoneEnterClass);
 	};
 
 	// When the dragged element leaves the drop zone
 	gameEvents.dzDragleave = function() {
-		this.classList.remove('dz-highlight');
+		this.classList.remove(dropZoneEnterClass);
 	};
 
 	// When the dragged element dropped in the drop zone
@@ -247,14 +256,14 @@ var Puzzle = (function() {
 		e.stopPropagation();
 
 		// Remove drop zone highlight
-		this.classList.remove('dz-highlight');
+		this.classList.remove(dropZoneEnterClass);
 
-		var dPuzzleData = e.dataTransfer.getData('text/plain').split(','),
-				dPuzzleIndex = parseInt(dPuzzleData[2], 10),
-				dImage = document.querySelector('#puzzle-list > img[data-index="' + dPuzzleIndex + '"]');
+		var dragPuzzleData = e.dataTransfer.getData('text/plain').split(','),
+				dragPuzzleIndex = parseInt(dragPuzzleData[2], 10),
+				dragImage = puzzleListEl.querySelector('img[data-index="' + dragPuzzleIndex + '"]');
 
 		// Handle puzzle guesses
-		if (parseInt(this.dataset.correctId, 10) === dPuzzleIndex) {
+		if (parseInt(this.dataset.correctId, 10) === dragPuzzleIndex) {
 			var dropZoneEvents = {
 				'dragover': gameEvents.dzDragover,
 				'dragenter': gameEvents.dzDragenter,
@@ -263,7 +272,7 @@ var Puzzle = (function() {
 			};
 
 			var dropZone = this;
-			correctPuzzleDrop(dImage, dropZone, dropZoneEvents);
+			correctPuzzleDrop(dragImage, dropZone, dropZoneEvents);
 
 		} else {
 			incorrectPuzzleDrop();
@@ -275,8 +284,8 @@ var Puzzle = (function() {
 	// Add game drag and drop events
 	var makePuzzlesDraggable = function() {
 
-		var puzzleDropZones = document.querySelectorAll('#puzzle-dropzones > div'),
-				singlePuzzles = document.querySelectorAll('#puzzle-list > img'),
+		var puzzleDropZones = puzzleDropZonesEl.querySelectorAll('div'),
+				singlePuzzles = puzzleListEl.querySelectorAll('img'),
 				i = 0,
 				len = 0;
 
@@ -305,7 +314,7 @@ var Puzzle = (function() {
 		dropZone.style.background = 'url(' + imageSrc + ')';
 
 		// Remove the guessed puzzle
-		document.querySelector('#puzzle-list').removeChild(image);
+		puzzleListEl.removeChild(image);
 
 		// Remove event listeners from the drop zone
 		// To prevent dropping images on it
