@@ -1,19 +1,19 @@
 var Uploader = (function() {
 
-	var _dropZone = '',
-			_uploadImageBtn = '';
+	var dropZone = '',
+			uploadImageBtn = '';
 
-	var init = function(dropZone, uploadImageBtn) {
-		_dropZone = dropZone;
-		_uploadImageBtn = uploadImageBtn;
+	var init = function(dropZoneEl, uploadImageBtnEl) {
+		dropZone = dropZoneEl;
+		uploadImageBtn = uploadImageBtnEl;
 	};
 	
 	var addHover = function() {
-		_dropZone.classList.add('drag-over');
+		dropZone.classList.add('drag-over');
 	};
 
 	var removeHover = function() {
-		_dropZone.classList.remove('drag-over');
+		dropZone.classList.remove('drag-over');
 	};
 
 	var handleDrop = function(e, callback) {
@@ -26,7 +26,7 @@ var Uploader = (function() {
 		if (e.type === 'drop') {
 			uploadedFile = e.dataTransfer.files;
 		} else {
-			uploadedFile = _uploadImageBtn.files;
+			uploadedFile = uploadImageBtn.files;
 		}
 
 		if (uploadedFile.length !== 1) {
@@ -36,7 +36,7 @@ var Uploader = (function() {
 			if (uploadedFile[0].type.match('image.*')) {
 
 				// There is one file and it's an image
-				_getImage(uploadedFile[0], callback);
+				getImage(uploadedFile[0], callback);
 
 			} else {
 				alert('You can upload only images');
@@ -51,7 +51,7 @@ var Uploader = (function() {
 		return false;
 	};
 
-	var _getImage = function(file, callback) {
+	var getImage = function(file, callback) {
 		var reader = new FileReader(),
 				imageCode = '';
 

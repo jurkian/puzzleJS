@@ -1,14 +1,14 @@
 var Puzzle = (function() {
 
-	var _imageCode = '',
-			w = window,
-			d = document,
-			e = d.documentElement,
-			g = d.getElementsByTagName('body')[0],
-			windowWidth = w.innerWidth || e.clientWidth || g.clientWidth;
+	var imageCode = '',
+		w = window,
+		d = document,
+		e = d.documentElement,
+		g = d.getElementsByTagName('body')[0],
+		windowWidth = w.innerWidth || e.clientWidth || g.clientWidth;
 
-	var init = function(imageCode) {
-		_imageCode = imageCode;
+	var init = function(code) {
+		imageCode = code;
 	};
 		 
 	var generatePuzzles = function(tilesX, tilesY, callback) {
@@ -20,7 +20,7 @@ var Puzzle = (function() {
 					puzzleGameEl = document.querySelector('#puzzle-game'),
 					resizedImgCode = '';
 
-			_resizeUploadedImage(_imageCode, windowWidth, function(resizedImgCode) {
+			resizeUploadedImage(imageCode, windowWidth, function(resizedImgCode) {
 				// Prepare image to split into parts
 				img.src = resizedImgCode;
 				img.onload = function() {
@@ -48,7 +48,7 @@ var Puzzle = (function() {
 						}
 					}
 
-					_drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
+					drawPuzzleDropZone(tilesX, tilesY, singleWidth, singleHeight);
 
 					if (typeof callback === 'function') {
 						callback(imgParts);
@@ -63,7 +63,7 @@ var Puzzle = (function() {
 
 	};
 
-	var _resizeUploadedImage = function(imageCode, wWidth, callback) {
+	var resizeUploadedImage = function(imageCode, wWidth, callback) {
 		// Resize the image so that it fits the 47.5% of screen width
 		// The rest is 5% free space and 47.5% for puzzle dropzones
 		var canvas = document.createElement('canvas'),
@@ -98,7 +98,7 @@ var Puzzle = (function() {
 		};
 	};
 
-	var _drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
+	var drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
 		var puzzleDropZoneEl = document.querySelector('#puzzle-dropzones'),
 				i = 0;
 
@@ -239,10 +239,10 @@ var Puzzle = (function() {
 				};
 
 				var dropZone = this;
-				_correctPuzzleDrop(dImage, dropZone, dropZoneEvents);
+				correctPuzzleDrop(dImage, dropZone, dropZoneEvents);
 
 			} else {
-				_incorrectPuzzleDrop();
+				incorrectPuzzleDrop();
 			}
 
 			return false;
@@ -264,7 +264,7 @@ var Puzzle = (function() {
 
 	};
 
-	var _correctPuzzleDrop = function(image, dropZone, dropZoneEvents) {
+	var correctPuzzleDrop = function(image, dropZone, dropZoneEvents) {
 		// Show the guessed puzzle on single drop zone
 		var imageSrc = image.src;
 		dropZone.style.background = 'url(' + imageSrc + ')';
@@ -281,7 +281,7 @@ var Puzzle = (function() {
 		}
 	};
 
-	var _incorrectPuzzleDrop = function() {};
+	var incorrectPuzzleDrop = function() {};
 
 	return {
 		init: init,
