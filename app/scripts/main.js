@@ -15,43 +15,44 @@
 				imageCode = '',
 				createPuzzleBtn = document.querySelector('#create-puzzle');
 
+		/**
+		 * View 1
+		 * Image uploader
+		 */
+		
 		// Initialize image uploader
 		Uploader.init(dropZone, uploadImageBtn);
 
-		// Handle other drop events
-		document.body.addEventListener('dragenter', Uploader.addHover, false);
-		document.body.addEventListener('dragleave', Uploader.removeHover, false);
-		document.body.addEventListener('dragover', Uploader.cancelDefault, false);
-
-		// Handle image drop event
+		// User uploaded an image
 		var handleImageDrop = function(e) {
-
-			Uploader.handleDrop(e, function(image) {
+			Uploader.getDroppedImage(e, function(image) {
 				imageCode = image;
 
-				// User uploaded an image
 				// Go to puzzle preview
 				App.changeView(puzzlePreview, function() {
 
 					// Before it happens, remove events from body
 					// We no longer need it to handle img uploading
-					var b = document.body;
-					b.removeEventListener('dragenter', Uploader.addHover);
-					b.removeEventListener('dragleave', Uploader.removeHover);
-					b.removeEventListener('dragover', Uploader.cancelDefault);
-					b.removeEventListener('drop', handleImageDrop);
+					Uploader.removeDragEvents();
+					document.body.removeEventListener('drop', handleImageDrop);
+					uploadImageBtn.removeEventListener('change', handleImageDrop);
 
 					// Show uploaded image preview
 					var img = document.querySelector('#puzzle-preview img');
 					img.src = imageCode;
 				});
 			});
-
 		};
-
+		
+		// Add image drop/file upload listeners
 		document.body.addEventListener('drop', handleImageDrop, false);
 		uploadImageBtn.addEventListener('change', handleImageDrop, false);
 
+		/**
+		 * View 2
+		 * Uploaded image preview
+		 */
+		
 		// User decided to create puzzles
 		// Go to puzzle game
 		var gotoPuzzleGame = function() {
@@ -65,6 +66,11 @@
 
 		createPuzzleBtn.addEventListener('click', gotoPuzzleGame, false);
 		
+		/**
+		 * View 3
+		 * Game
+		 */
+
 		// Puzzle game view
 		var handlePuzzleGame = function() {
 

@@ -1,49 +1,70 @@
 var Uploader = (function() {
 
-	var dropZone = '',
-			uploadImageBtn = '';
+	var dropZoneEl = '',
+			uploadBtnEl = '';
 
-	var init = function(dropZoneEl, uploadImageBtnEl) {
-		dropZone = dropZoneEl;
-		uploadImageBtn = uploadImageBtnEl;
+	var init = function(dropZone, uploadBtn) {
+		dropZoneEl = dropZone;
+		uploadBtnEl = uploadBtn;
 	};
 	
 	var addHover = function() {
-		dropZone.classList.add('drag-over');
+		dropZoneEl.classList.add('drag-over');
 	};
 
 	var removeHover = function() {
-		dropZone.classList.remove('drag-over');
+		dropZoneEl.classList.remove('drag-over');
 	};
 
-	var handleDrop = function(e, callback) {
+	var getDroppedImage = function(e, callback) {
+
+		handleImageDrop(e).then(function(uploadedFile) {
+			return getImageBase64(uploadedFile);
+		}).then(function(imageBase64) {
+			return callback(imageBase64);
+		});
+
+		addDragEvents();
+		removeHover();
+	};
+
+	var handleImageDrop = function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		// Detect if user uploaded the image using drag and drop or file input method
-		var uploadedFile = '';
+		return new Promise(function(resolve, reject) {
+			// Detect if user uploaded the image using drag and drop or file input method
+			var uploadedFile = '';
 
-		if (e.type === 'drop') {
-			uploadedFile = e.dataTransfer.files;
-		} else {
-			uploadedFile = uploadImageBtn.files;
-		}
+			uploadedFile = (e.type === 'drop') ? e.dataTransfer.files : uploadBtnEl.files;
 
-		if (uploadedFile.length !== 1) {
-			alert('You can upload only 1 image - Try again');
-		} else {
-
-			if (uploadedFile[0].type.match('image.*')) {
-
-				// There is one file and it's an image
-				getImage(uploadedFile[0], callback);
-
+			if (uploadedFile.length !== 1) {
+				alert('You can upload only 1 image - Try again');
 			} else {
-				alert('You can upload only images');
+
+				if (uploadedFile[0].type.match('image.*')) {
+					// There is one file and it's an image 
+					resolve(uploadedFile[0]);
+				} else {
+					alert('You can upload only images');
+					reject();
+				}
 			}
-		}
-		
-		removeHover();
+		});
+	};
+
+	var getImageBase64 = function(file) {
+		var reader = new FileReader(),
+				imageCode = '';
+
+		return new Promise(function(resolve, reject) {
+			reader.onload = function() {
+				imageCode = reader.result;
+				resolve(imageCode);
+			};
+
+			reader.readAsDataURL(file);
+		});
 	};
 
 	var cancelDefault = function(e) {
@@ -51,27 +72,24 @@ var Uploader = (function() {
 		return false;
 	};
 
-	var getImage = function(file, callback) {
-		var reader = new FileReader(),
-				imageCode = '';
+	// Add drag events
+	var addDragEvents = function() {
+		document.body.addEventListener('dragenter', addHover, false);
+		document.body.addEventListener('dragleave', removeHover, false);
+		document.body.addEventListener('dragover', cancelDefault, false);
+	};
 
-		reader.onload = function() {
-			imageCode = reader.result;
-			
-			if (typeof callback === 'function') {
-				callback(imageCode);
-			}
-		};
-
-		reader.readAsDataURL(file);
+	// Remove all registered drag and drop events
+	var removeDragEvents = function() {
+		document.body.removeEventListener('dragenter', addHover);
+		document.body.removeEventListener('dragleave', removeHover);
+		document.body.removeEventListener('dragover', cancelDefault);
 	};
 
 	return {
 		init: init,
-		addHover: addHover,
-		removeHover: removeHover,
-		cancelDefault: cancelDefault,
-		handleDrop: handleDrop
+		getDroppedImage: getDroppedImage,
+		removeDragEvents: removeDragEvents
 	};
 
 })();
