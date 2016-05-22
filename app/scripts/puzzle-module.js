@@ -109,7 +109,7 @@ var Puzzle = (function() {
 						// dx, dy = 0 (we don't want to move the clipped image on new canvas)
 						ctx.drawImage(img, x * singleWidth, y * singleHeight, singleWidth, singleHeight, 0, 0, singleWidth, singleHeight);
 
-						// Store the image data of each tile in the array
+						// Store every image part in the array
 						imgParts.push(canvas.toDataURL());
 					}
 				}
@@ -131,7 +131,7 @@ var Puzzle = (function() {
 		return new Promise(function(resolve, reject) {
 			for (var y = 0; y < tilesY; y++) {
 				for (var x = 0; x < tilesX; x++) {
-					
+
 					var singleDz = document.createElement('div');
 
 					singleDz.dataset.correctId = i+1;
@@ -153,6 +153,7 @@ var Puzzle = (function() {
 				len = 0;
 
 		// Prepare puzzle elements
+		// Set src, draggable, index
 		for (i = 0, len = puzzleCodes.length; i < len; i++) {
 			var singlePuzzle = document.createElement('img');
 			
@@ -166,7 +167,7 @@ var Puzzle = (function() {
 		// Randomize the puzzles
 		generatedImages = App.randomizeArray(generatedImages);
 
-		// Show ready images on screen
+		// Draw images on screen
 		for (i = 0, len = generatedImages.length; i < len; i++) {
 			puzzleContainer.appendChild(generatedImages[i]);
 		}
@@ -201,8 +202,8 @@ var Puzzle = (function() {
 	};
 
 	// When the drag interaction finishes
+	// Remove highlight 
 	gameEvents.puzzleDragend = function(e) {
-		// Remove highlight 
 		this.classList.remove(draggedPuzzleHlClass);
 	};
 
@@ -289,13 +290,13 @@ var Puzzle = (function() {
 				i = 0,
 				len = 0;
 
-		// Attach events for draggable puzzles
+		// Attach events to draggable puzzles
 		for (i = 0, len = singlePuzzles.length; i < len; i++) {
 			singlePuzzles[i].addEventListener('dragstart', gameEvents.puzzleDragstart);
 			singlePuzzles[i].addEventListener('dragend', gameEvents.puzzleDragend);
 		}
 
-		// Attach events for puzzle drop zones
+		// Attach events to puzzle drop zones
 		for (i = 0, len = puzzleDropZones.length; i < len; i++) {
 			puzzleDropZones[i].addEventListener('dragover', gameEvents.dzDragover);
 			puzzleDropZones[i].addEventListener('dragenter', gameEvents.dzDragenter);
@@ -303,7 +304,7 @@ var Puzzle = (function() {
 			puzzleDropZones[i].addEventListener('drop', gameEvents.dzDrop);
 		}
 
-		// Attach events for body
+		// Attach events to body
 		document.body.addEventListener('drop', gameEvents.bodyPuzzleDrop, false);
 		document.body.addEventListener('dragover', gameEvents.bodyDragOver, false);
 	};

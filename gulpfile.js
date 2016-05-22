@@ -1,8 +1,8 @@
-import gulp from 'gulp';
-import gulpLoadPlugins from 'gulp-load-plugins';
-import browserSync from 'browser-sync';
-import del from 'del';
-import {stream as wiredep} from 'wiredep';
+const gulp = require('gulp');
+const gulpLoadPlugins = require('gulp-load-plugins');
+const browserSync = require('browser-sync');
+const del = require('del');
+const wiredep = require('wiredep').stream;
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -33,15 +33,19 @@ gulp.task('scripts', () => {
 });
 
 function lint(files, options) {
-	return () => {
-		return gulp.src(files)
-			.pipe(reload({stream: true, once: true}))
-			.pipe($.eslint(options))
-			.pipe($.eslint.format())
-	};
+	return gulp.src(files)
+		.pipe(reload({stream: true, once: true}))
+		.pipe($.eslint(options))
+		.pipe($.eslint.format())
+		.pipe($.if(!browserSync.active, $.eslint.failAfterError()));
 }
 
-gulp.task('lint', lint('app/scripts/**/*.js'));
+gulp.task('lint', () => {
+	return lint('app/scripts/**/*.js', {
+		fix: true
+	})
+		.pipe(gulp.dest('app/scripts'));
+});
 
 gulp.task('html', ['styles', 'scripts'], () => {
 	return gulp.src('app/*.html')
@@ -50,23 +54,19 @@ gulp.task('html', ['styles', 'scripts'], () => {
 		.pipe($.if('*.css', $.uncss({
 			html: ['app/*.html']
 		})))
-		.pipe($.if('*.css', $.cssnano()))
+		.pipe($.if('*.css', $.cssnano({safe: true, autoprefixer: false})))
 		.pipe($.if('*.html', $.htmlmin({collapseWhitespace: true})))
 		.pipe(gulp.dest('dist'));
 });
 
 gulp.task('images', () => {
 	return gulp.src('app/images/**/*')
-		.pipe($.cache($.image({
-			pngquant: true,
-			optipng: false,
-			zopflipng: true,
-			advpng: true,
-			jpegRecompress: true,
-			jpegoptim: true,
-			mozjpeg: true,
-			gifsicle: true,
-			svgo: true
+		.pipe($.cache($.imagemin({
+			progressive: true,
+			interlaced: true,
+			// don't remove IDs from SVGs, they are often used
+			// as hooks for embedding and styling
+			svgoPlugins: [{cleanupIDs: false}]
 		})))
 		.pipe(gulp.dest('dist/images'));
 });
@@ -133,7 +133,6 @@ gulp.task('wiredep', () => {
 
 	gulp.src('app/*.html')
 		.pipe(wiredep({
-			exclude: ['bootstrap-sass'],
 			ignorePath: /^(\.\.\/)*\.\./
 		}))
 		.pipe(gulp.dest('app'));
@@ -142,7 +141,6 @@ gulp.task('wiredep', () => {
 gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras'], () => {
 	return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
-
 
 gulp.task('default', ['clean'], () => {
 	gulp.start('build');
