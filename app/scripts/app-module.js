@@ -10,6 +10,14 @@ var App = (function() {
 		return (features.fr && features.drag && features.canvas);
 	};
 
+	var isLowScreenRes = function() {
+		if (window.innerWidth <= 800 && window.innerHeight <= 600) {
+		  return true;
+		} else {
+		  return false;
+		}
+	};
+
 	var changeView = function(newView, beforeShowingNew, callback) {
 		// Get currently visible view
 		var currentView = document.querySelector('.wrapper > .view:not(.hide-view)');
@@ -53,6 +61,7 @@ var App = (function() {
 
 	return {
 		isNewAPISupported: isNewAPISupported,
+		isLowScreenRes: isLowScreenRes,
 		changeView: changeView,
 		randomizeArray: randomizeArray
 	};

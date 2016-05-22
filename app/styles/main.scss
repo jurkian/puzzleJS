@@ -94,6 +94,7 @@ $icon-font-path: '../fonts/';
 /* Puzzles list */
 
 .puzzle-list {
+  flex: 1;
 
   /* Single puzzle */
   & > img {
@@ -105,6 +106,7 @@ $icon-font-path: '../fonts/';
 
 .puzzle-dropzones {
   display: flex;
+  flex: 1;
   flex-wrap: wrap;
   border: 2px dashed #ccc;
 }
@@ -121,9 +123,23 @@ $icon-font-path: '../fonts/';
   overflow: hidden !important;
   border: 0 !important;
   padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Responsive views */
+
+@media screen and (max-width: 1000px) {
+  .wrapper {
+    max-width: 100%;
+  }
+
+  .upload-drop-zone, .puzzle-preview {
+    max-height: 80%;
+    max-width: 800px;
+    width: 94%;
+  }
+}
+
 @media screen and (max-width: 800px) {
   .upload-drop-zone {
     > form {

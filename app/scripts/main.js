@@ -7,6 +7,11 @@
 			alert('Make sure your browser is up to date. Consider using Chrome or Firefox.');
 		}
 
+		// Detect if user has low screen resolution
+		if (App.isLowScreenRes()) {
+			alert('You need a bigger screen to play comfortably.');
+		}
+
 		var d = document,
 				s = '';
 
