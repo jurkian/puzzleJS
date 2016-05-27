@@ -2,7 +2,6 @@ const gulp = require('gulp');
 const gulpLoadPlugins = require('gulp-load-plugins');
 const browserSync = require('browser-sync');
 const del = require('del');
-const wiredep = require('wiredep').stream;
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -107,7 +106,6 @@ gulp.task('serve', ['styles', 'scripts', 'fonts'], () => {
 	gulp.watch('app/styles/**/*.scss', ['styles']);
 	gulp.watch('app/scripts/**/*.js', ['scripts']);
 	gulp.watch('app/fonts/**/*', ['fonts']);
-	gulp.watch('bower.json', ['wiredep', 'fonts']);
 });
 
 gulp.task('serve:dist', () => {
@@ -118,21 +116,6 @@ gulp.task('serve:dist', () => {
 			baseDir: ['dist']
 		}
 	});
-});
-
-// inject bower components
-gulp.task('wiredep', () => {
-	gulp.src('app/styles/*.scss')
-		.pipe(wiredep({
-			ignorePath: /^(\.\.\/)+/
-		}))
-		.pipe(gulp.dest('app/styles'));
-
-	gulp.src('app/*.html')
-		.pipe(wiredep({
-			ignorePath: /^(\.\.\/)*\.\./
-		}))
-		.pipe(gulp.dest('app'));
 });
 
 gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras'], () => {
