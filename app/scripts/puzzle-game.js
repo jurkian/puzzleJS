@@ -1,24 +1,24 @@
 var Tools = require('./tools.js');
 
-var uploadImageBase64 = '',
-	puzzleListEl = '',
-	puzzleDropZonesEl = '',
-	draggedPuzzleHlClass = '',
-	dropZoneEnterClass = '',
-	w = window,
+// Default settings
+var s = {
+	uploadImageBase64: '',
+	puzzleListEl: {},
+	puzzleDropZonesEl: {},
+	draggedPuzzleHlClass: '',
+	dropZoneEnterClass: ''
+};
+
+// Local variables
+var w = window,
 	d = document,
 	e = d.documentElement,
 	g = d.getElementsByTagName('body')[0],
 	windowWidth = w.innerWidth || e.clientWidth || g.clientWidth;
 
-var init = function(settings) {
-	var s = settings;
-
-	uploadImageBase64 = s.uploadImageBase64;
-	puzzleListEl = s.puzzleListEl;
-	puzzleDropZonesEl = s.puzzleDropZonesEl;
-	draggedPuzzleHlClass = s.draggedPuzzleHlClass;
-	dropZoneEnterClass = s.dropZoneEnterClass;
+var init = function(config) {
+	// Get user's defined options
+	Tools.updateSettings(s, config);
 };
 
 // Generate puzzles basing on chosen X and Y tiles amount
@@ -30,14 +30,21 @@ var generatePuzzles = function(tilesX, tilesY) {
 
 			var resizedImageParts = [];
 
-			resizeUploadedImage(uploadImageBase64, windowWidth)
+			resizeUploadedImage(s.uploadImageBase64, windowWidth)
 			.then(function(resizedImgCode) {
+
 				return splitImageIntoParts(resizedImgCode, tilesX, tilesY);
+
 			}).then(function(parts) {
+
 				resizedImageParts = parts.list;
 				return drawPuzzleDropZone(tilesX, tilesY, parts.singleWidth, parts.singleHeight);
+
 			}).then(function() {
-				resolve(resizedImageParts);
+
+				drawPuzzles(resizedImageParts, s.puzzleListEl);
+				makePuzzlesDraggable();
+
 			});
 
 		} else {
@@ -138,7 +145,7 @@ var drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
 				singleDz.style.width = imgWidth + 'px';
 				singleDz.style.height = imgHeight + 'px';
 				
-				puzzleDropZonesEl.appendChild(singleDz);
+				s.puzzleDropZonesEl.appendChild(singleDz);
 				i++;
 			}
 		}
@@ -173,6 +180,25 @@ var drawPuzzles = function(puzzleCodes, puzzleContainer) {
 	}
 };
 
+var correctPuzzleDrop = function(image, dropZone, dropZoneEvents) {
+	// Show the guessed puzzle on single drop zone
+	var imageSrc = image.src;
+	dropZone.style.background = 'url(' + imageSrc + ')';
+
+	// Remove the guessed puzzle
+	s.puzzleListEl.removeChild(image);
+
+	// Remove event listeners from the drop zone
+	// To prevent dropping images on it
+	for (var event in dropZoneEvents) {
+	  if (dropZoneEvents.hasOwnProperty(event)) {
+	    dropZone.removeEventListener(event, dropZoneEvents[event]);
+	  }
+	}
+};
+
+var incorrectPuzzleDrop = function() {};
+
 /**
  * Puzzle events
  * Organized in an object
@@ -189,7 +215,7 @@ gameEvents.puzzleDragstart = function(e) {
 	e.dataTransfer.effectAllowed = 'move';
 
 	// Highlight currently dragged puzzle
-	this.classList.add(draggedPuzzleHlClass);
+	this.classList.add(s.draggedPuzzleHlClass);
 	this.style.zIndex = '99';
 
 	// Send data: current puzzle x, y position and index
@@ -204,7 +230,7 @@ gameEvents.puzzleDragstart = function(e) {
 // When the drag interaction finishes
 // Remove highlight 
 gameEvents.puzzleDragend = function(e) {
-	this.classList.remove(draggedPuzzleHlClass);
+	this.classList.remove(s.draggedPuzzleHlClass);
 };
 
 /**
@@ -216,7 +242,7 @@ gameEvents.bodyPuzzleDrop = function(e) {
 	
 	var dropPuzzleData = e.dataTransfer.getData('text/plain').split(','),
 		dropPuzzleIndex = parseInt(dropPuzzleData[2], 10),
-		dropPuzzle = puzzleListEl.querySelector('img[data-index="' + dropPuzzleIndex + '"]');
+		dropPuzzle = s.puzzleListEl.querySelector('img[data-index="' + dropPuzzleIndex + '"]');
 
 	dropPuzzle.style.left = (e.clientX + parseInt(dropPuzzleData[0], 10)) + 'px';
 	dropPuzzle.style.top = (e.clientY + parseInt(dropPuzzleData[1], 10)) + 'px';
@@ -243,12 +269,12 @@ gameEvents.dzDragover = function(e) {
 
 // When the dragged element enters the drop zone
 gameEvents.dzDragenter = function() {
-	this.classList.add(dropZoneEnterClass);
+	this.classList.add(s.dropZoneEnterClass);
 };
 
 // When the dragged element leaves the drop zone
 gameEvents.dzDragleave = function() {
-	this.classList.remove(dropZoneEnterClass);
+	this.classList.remove(s.dropZoneEnterClass);
 };
 
 // When the dragged element dropped in the drop zone
@@ -257,11 +283,11 @@ gameEvents.dzDrop = function(e) {
 	e.stopPropagation();
 
 	// Remove drop zone highlight
-	this.classList.remove(dropZoneEnterClass);
+	this.classList.remove(s.dropZoneEnterClass);
 
 	var dragPuzzleData = e.dataTransfer.getData('text/plain').split(','),
 		dragPuzzleIndex = parseInt(dragPuzzleData[2], 10),
-		dragImage = puzzleListEl.querySelector('img[data-index="' + dragPuzzleIndex + '"]');
+		dragImage = s.puzzleListEl.querySelector('img[data-index="' + dragPuzzleIndex + '"]');
 
 	// Handle puzzle guesses
 	if (parseInt(this.dataset.correctId, 10) === dragPuzzleIndex) {
@@ -285,8 +311,8 @@ gameEvents.dzDrop = function(e) {
 // Add game drag and drop events
 var makePuzzlesDraggable = function() {
 
-	var puzzleDropZones = puzzleDropZonesEl.querySelectorAll('div'),
-		singlePuzzles = puzzleListEl.querySelectorAll('img'),
+	var puzzleDropZones = s.puzzleDropZonesEl.querySelectorAll('div'),
+		singlePuzzles = s.puzzleListEl.querySelectorAll('img'),
 		i = 0,
 		len = 0;
 
@@ -309,28 +335,7 @@ var makePuzzlesDraggable = function() {
 	document.body.addEventListener('dragover', gameEvents.bodyDragOver, false);
 };
 
-var correctPuzzleDrop = function(image, dropZone, dropZoneEvents) {
-	// Show the guessed puzzle on single drop zone
-	var imageSrc = image.src;
-	dropZone.style.background = 'url(' + imageSrc + ')';
-
-	// Remove the guessed puzzle
-	puzzleListEl.removeChild(image);
-
-	// Remove event listeners from the drop zone
-	// To prevent dropping images on it
-	for (var event in dropZoneEvents) {
-	  if (dropZoneEvents.hasOwnProperty(event)) {
-	    dropZone.removeEventListener(event, dropZoneEvents[event]);
-	  }
-	}
-};
-
-var incorrectPuzzleDrop = function() {};
-
 module.exports = {
 	init: init,
-	generatePuzzles: generatePuzzles,
-	drawPuzzles: drawPuzzles,
-	makePuzzlesDraggable: makePuzzlesDraggable
+	generatePuzzles: generatePuzzles
 };

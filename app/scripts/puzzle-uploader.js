@@ -1,35 +1,59 @@
-var uploadDropZoneView = '',
-	uploadInput = '',
-	uploadOverClass = '';
+var Tools = require('./tools.js');
 
-var init = function(settings) {
-	var s = settings;
-
-	uploadDropZoneView = s.uploadDropZoneView;
-	uploadInput = s.uploadInput;
-	uploadOverClass = s.uploadOverClass;
-
-	// Add drag and drop events
-	addDragEvents();
+// Settings
+var s = {
+	uploadDropZoneView: {},
+	uploadInput: {},
+	uploadOverClass: {},
+	puzzlePreviewView: {}
 };
 
+var init = function(config) {
+
+	return new Promise(function(resolve, reject) {
+		// Get user's defined options
+		Tools.updateSettings(s, config);
+
+		// Add drag and drop events
+		addDragEvents();
+
+		// User uploaded an image
+		var imageUploaded = function(e) {
+			getDroppedImage(e, function(imageBase64) {
+
+				// Remove events from body
+				// We no longer need it to handle img uploading
+				removeHover();
+				removeDragEvents();
+
+				document.body.removeEventListener('drop', imageUploaded);
+				s.uploadInput.removeEventListener('change', imageUploaded);
+
+				// Go to puzzle preview
+				Tools.changeView(s.puzzlePreviewView, function() {
+					resolve(imageBase64);
+				});	
+			});
+		};
+
+		// Add image drop/file upload listeners
+		document.body.addEventListener('drop', imageUploaded, false);
+		s.uploadInput.addEventListener('change', imageUploaded, false);
+	});
+};
+
+// Drag events
 var addHover = function() {
-	uploadDropZoneView.classList.add(uploadOverClass);
+	s.uploadDropZoneView.classList.add(s.uploadOverClass);
 };
 
 var removeHover = function() {
-	uploadDropZoneView.classList.remove(uploadOverClass);
+	s.uploadDropZoneView.classList.remove(s.uploadOverClass);
 };
 
-var getDroppedImage = function(e, callback) {
-
-	handleImageDrop(e).then(function(uploadedFile) {
-		return getImageBase64(uploadedFile);
-	}).then(function(imageBase64) {
-		return callback(imageBase64);
-	});
-
-	removeHover();
+var cancelDefault = function(e) {
+	e.preventDefault();
+	return false;
 };
 
 var handleImageDrop = function(e) {
@@ -40,7 +64,7 @@ var handleImageDrop = function(e) {
 		// Detect if user uploaded the image using drag and drop or file input method
 		var uploadedFile = '';
 
-		uploadedFile = (e.type === 'drop') ? e.dataTransfer.files : uploadInput.files;
+		uploadedFile = (e.type === 'drop') ? e.dataTransfer.files : s.uploadInput.files;
 
 		if (uploadedFile.length !== 1) {
 			alert('You can upload only 1 image - Try again');
@@ -71,9 +95,12 @@ var getImageBase64 = function(file) {
 	});
 };
 
-var cancelDefault = function(e) {
-	e.preventDefault();
-	return false;
+var getDroppedImage = function(e, callback) {
+	handleImageDrop(e).then(function(uploadedFile) {
+		return getImageBase64(uploadedFile);
+	}).then(function(imageBase64) {
+		return callback(imageBase64);
+	});
 };
 
 // Add drag events
@@ -91,7 +118,5 @@ var removeDragEvents = function() {
 };
 
 module.exports = {
-	init: init,
-	getDroppedImage: getDroppedImage,
-	removeDragEvents: removeDragEvents
+	init: init
 };

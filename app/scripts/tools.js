@@ -57,9 +57,19 @@ var randomizeArray = function(o) {
 	return o;
 };
 
+// Overwrite default settings with user's
+var updateSettings = function(defaultSettings, newSettings) {
+	for (var prop in newSettings) {
+		if (newSettings.hasOwnProperty(prop)) {
+			defaultSettings[prop] = newSettings[prop];
+		}
+	}
+};
+
 module.exports = {
 	isNewAPISupported: isNewAPISupported,
 	isLowScreenRes: isLowScreenRes,
 	changeView: changeView,
-	randomizeArray: randomizeArray
+	randomizeArray: randomizeArray,
+	updateSettings: updateSettings
 };
