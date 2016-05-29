@@ -1,4 +1,6 @@
-var Tools = require('./tools.js');
+var Tools = require('./tools.js'),
+	Images = require('./images.js'),
+	Generators = require('./generators.js');
 
 // Default settings
 var s = {
@@ -29,22 +31,16 @@ var generatePuzzles = function(tilesX, tilesY) {
 		if (tilesX === parseInt(tilesX, 10) && tilesY === parseInt(tilesY, 10)) {
 
 			var resizedImageParts = [];
-
-			resizeUploadedImage(s.uploadImageBase64, windowWidth)
+			
+			Images.resizeUploaded(s.uploadImageBase64, windowWidth)
 			.then(function(resizedImgCode) {
-
-				return splitImageIntoParts(resizedImgCode, tilesX, tilesY);
-
+				return Images.splitToParts(resizedImgCode, tilesX, tilesY);
 			}).then(function(parts) {
-
 				resizedImageParts = parts.list;
-				return drawPuzzleDropZone(tilesX, tilesY, parts.singleWidth, parts.singleHeight);
-
+				return Generators.drawPuzzleDropZones(tilesX, tilesY, parts.singleWidth, parts.singleHeight, s.puzzleDropZonesEl);
 			}).then(function() {
-
-				drawPuzzles(resizedImageParts, s.puzzleListEl);
+				Generators.drawPuzzles(resizedImageParts, s.puzzleListEl);
 				makePuzzlesDraggable();
-
 			});
 
 		} else {
@@ -52,132 +48,6 @@ var generatePuzzles = function(tilesX, tilesY) {
 			reject();
 		}
 	});
-};
-
-// Resize the image proportionally so that it fits the 47.5% of screen width
-// The rest is 5% free space and 47.5% for puzzle dropzones
-var resizeUploadedImage = function(imageCode, wWidth) {
-
-	var canvas = document.createElement('canvas'),
-    ctx = canvas.getContext('2d'),
-    img = new Image(),
-    targetImageWidth = wWidth * 0.475;
-
-	return new Promise(function(resolve, reject) {
-    img.src = imageCode;
-    img.onload = function() {
-
-    	// If the image doesn't need to be resized (has less width than targeted)
-    	// return the imageCode
-    	if (img.width < targetImageWidth) {
-  			resolve(imageCode);
-    	} else {
-
-				// Set image size basing on target width
-				canvas.width = targetImageWidth;
-				canvas.height = canvas.width * (img.height / img.width);
-
-				// Draw source image into the off-screen canvas
-				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-				// Send a base64 coded new image
-				resolve(canvas.toDataURL());
-			}
-		};
-	});
-};
-
-var splitImageIntoParts = function(resizedImgCode, tilesX, tilesY) {
-	var canvas = document.createElement('canvas'),
-		ctx = canvas.getContext('2d'),
-		img = new Image(),
-		imgParts = [],
-		singleWidth = 0,
-		singleHeight = 0;
-
-	return new Promise(function(resolve, reject) {
-
-		// Prepare image to split into parts
-		img.src = resizedImgCode;
-		img.onload = function() {
-
-			// Convert image (base64) to parts (single puzzles), using canvas
-			singleWidth = img.width / tilesX;
-			singleHeight = img.height / tilesY;
-
-			for (var y = 0; y < tilesY; y++) {
-				for (var x = 0; x < tilesX; x++) {
-					
-					canvas.width = singleWidth;
-					canvas.height = singleHeight;
-					
-					// ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-					// sx, sy = calculate dynamically (source image)
-					// dx, dy = 0 (we don't want to move the clipped image on new canvas)
-					ctx.drawImage(img, x * singleWidth, y * singleHeight, singleWidth, singleHeight, 0, 0, singleWidth, singleHeight);
-
-					// Store every image part in the array
-					imgParts.push(canvas.toDataURL());
-				}
-			}
-
-			var data = {
-				list: imgParts,
-				singleWidth: singleWidth,
-				singleHeight: singleHeight
-			};
-
-			resolve(data);
-		};
-	});
-};
-
-var drawPuzzleDropZone = function(tilesX, tilesY, imgWidth, imgHeight) {
-	var i = 0;
-
-	return new Promise(function(resolve, reject) {
-		for (var y = 0; y < tilesY; y++) {
-			for (var x = 0; x < tilesX; x++) {
-
-				var singleDz = document.createElement('div');
-
-				singleDz.dataset.correctId = i+1;
-				singleDz.style.width = imgWidth + 'px';
-				singleDz.style.height = imgHeight + 'px';
-				
-				s.puzzleDropZonesEl.appendChild(singleDz);
-				i++;
-			}
-		}
-
-		resolve();
-	});
-};
-
-var drawPuzzles = function(puzzleCodes, puzzleContainer) {
-	var generatedImages = [],
-		i = 0,
-		len = 0;
-
-	// Prepare puzzle elements
-	// Set src, draggable, index
-	for (i = 0, len = puzzleCodes.length; i < len; i++) {
-		var singlePuzzle = document.createElement('img');
-		
-		singlePuzzle.src = puzzleCodes[i];
-		singlePuzzle.setAttribute('draggable', true);
-		singlePuzzle.dataset.index = i+1;
-
-		generatedImages.push(singlePuzzle);
-	}
-
-	// Randomize the puzzles
-	generatedImages = Tools.randomizeArray(generatedImages);
-
-	// Draw images on screen
-	for (i = 0, len = generatedImages.length; i < len; i++) {
-		puzzleContainer.appendChild(generatedImages[i]);
-	}
 };
 
 var correctPuzzleDrop = function(image, dropZone, dropZoneEvents) {
@@ -191,9 +61,9 @@ var correctPuzzleDrop = function(image, dropZone, dropZoneEvents) {
 	// Remove event listeners from the drop zone
 	// To prevent dropping images on it
 	for (var event in dropZoneEvents) {
-	  if (dropZoneEvents.hasOwnProperty(event)) {
-	    dropZone.removeEventListener(event, dropZoneEvents[event]);
-	  }
+		if (dropZoneEvents.hasOwnProperty(event)) {
+			dropZone.removeEventListener(event, dropZoneEvents[event]);
+		}
 	}
 };
 

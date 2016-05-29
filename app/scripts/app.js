@@ -28,6 +28,7 @@ var d = document,
 
 // Start the game
 var start = function(config, callback) {
+
 	// Detect if browser supports new HTML5 APIs
 	if (!Tools.isNewAPISupported()) {
 		alert('Make sure your browser is up to date. Consider using Chrome or Firefox.');
