@@ -2,14 +2,8 @@ var Tools = require('./tools.js'),
 	Images = require('./images.js'),
 	Generators = require('./generators.js');
 
-// Default settings
-var s = {
-	uploadImageBase64: '',
-	puzzleListEl: {},
-	puzzleDropZonesEl: {},
-	draggedPuzzleHlClass: '',
-	dropZoneEnterClass: ''
-};
+// Settings
+var s = {};
 
 // Local variables
 var w = window,
@@ -54,6 +48,7 @@ var correctPuzzleDrop = function(image, dropZone, dropZoneEvents) {
 	// Show the guessed puzzle on single drop zone
 	var imageSrc = image.src;
 	dropZone.style.background = 'url(' + imageSrc + ')';
+	dropZone.style.border = '0';
 
 	// Remove the guessed puzzle
 	s.puzzleListEl.removeChild(image);

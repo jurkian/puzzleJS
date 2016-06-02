@@ -87,6 +87,10 @@
   box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.15);
 }
 
+.puzzle-highlight, .dz-highlight {
+  transition: box-shadow .15s ease;
+}
+
 /* Puzzles list */
 
 .puzzle-list {
@@ -104,22 +108,37 @@
   display: flex;
   flex: 1;
   flex-wrap: wrap;
-  border: 2px dashed #ccc;
+
+  > div {
+    border: 1px solid #f0f0f0;
+    margin: 0 0 -1px -1px;
+  }
 }
 
 /* Show/hide views */
 
-.transparent-view {
-  opacity: 0 !important;
+@keyframes hide-view {
+  0% {}
+
+  100% {
+    opacity: 0;
+  }
 }
 
-.hide-view {
-  height: 0 !important;
-  width: 0 !important;
-  overflow: hidden !important;
-  border: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
+@keyframes show-view {
+  0% {}
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.view-out {
+  animation: hide-view .35s forwards;
+}
+
+.view-in {
+  animation: show-view .35s forwards;
 }
 
 /* Responsive views */

@@ -1,12 +1,7 @@
 var Tools = require('./tools.js');
 
 // Settings
-var s = {
-	uploadDropZoneView: {},
-	uploadInput: {},
-	uploadOverClass: {},
-	puzzlePreviewView: {}
-};
+var s = {};
 
 var init = function(config) {
 
@@ -29,10 +24,7 @@ var init = function(config) {
 				document.body.removeEventListener('drop', imageUploaded);
 				s.uploadInput.removeEventListener('change', imageUploaded);
 
-				// Go to puzzle preview
-				Tools.changeView(s.puzzlePreviewView, function() {
-					resolve(imageBase64);
-				});	
+				resolve(imageBase64);
 			});
 		};
 

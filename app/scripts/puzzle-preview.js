@@ -1,9 +1,7 @@
 var Tools = require('./tools.js');
 
-var s = {
-	createPuzzleBtn: {},
-	puzzleGameView: {}
-};
+// Settings
+var s = {};
 
 // User decided to create puzzles
 // Go to puzzle game
@@ -12,18 +10,9 @@ var init = function(config) {
 	// Get user's defined options
 	Tools.updateSettings(s, config);
 
-	var createPuzzles = function() {
-		return new Promise(function(resolve, reject) {
-			Tools.changeView(s.puzzleGameView, function() {
-				document.querySelector('.wrapper').classList.add('game-wrapper');
-			}, function() {
-				resolve();
-			});
-		});
-	};
-
-	s.createPuzzleBtn.addEventListener('click', createPuzzles, false);
-
+	// Show uploaded image preview
+	var img = s.puzzlePreviewImgEl;
+	img.src = s.uploadImageBase64;
 };
 
 module.exports.init = init;
