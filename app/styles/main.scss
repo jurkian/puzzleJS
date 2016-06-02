@@ -17,7 +17,29 @@
   cursor: move;
 }
 
-.upload-drop-zone, .puzzle-preview, .puzzle-game {
+/* Views */
+
+/* Intro */
+
+.intro {
+  margin-top: -20%;
+  text-align: center;
+
+  h1 {
+    font-size: 44px;
+    margin: 0 0 20px;
+  }
+
+  span {
+    display: block;
+    color: #606060;
+    font-size: 18px;
+  }
+}
+
+/* Drop zone */
+
+.upload-drop-zone, .puzzle-game {
   max-width: 80%;
   width: 100%;
   display: flex;
@@ -36,34 +58,16 @@
   }
 }
 
-.upload-drop-zone, .puzzle-preview {
+.upload-drop-zone {
   padding: 15px;
   height: 100%;
 }
-
-/* Drop zone */
 
 .upload-drop-zone {
   max-height: 60%;
   
   &.drag-over {
     border-color: #333;
-  }
-}
-
-/* Puzzle preview */
-
-.puzzle-preview {
-  max-height: 80%;
-  
-  .create-puzzle {
-    margin-bottom: 30px;
-  }
-
-  figure {
-    max-width: 90%;
-    max-height: 320px;
-    overflow: hidden;
   }
 }
 
@@ -148,7 +152,7 @@
     max-width: 100%;
   }
 
-  .upload-drop-zone, .puzzle-preview {
+  .upload-drop-zone {
     max-height: 80%;
     max-width: 800px;
     width: 94%;

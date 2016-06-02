@@ -2,7 +2,6 @@ var Tools = require('./tools.js'),
 	Page = require('page'),
 	View = require('./view.js'),
 	Uploader = require('./puzzle-uploader.js'),
-	Preview = require('./puzzle-preview.js'),
 	Game = require('./puzzle-game.js');
 
 // Run the game if all assets are loaded
@@ -32,6 +31,22 @@ var init = function() {
 
 	Page('/', function() {
 		View.load('views/index.html', function() {
+			var createPuzzles = function() {
+				Page('upload');
+			};
+
+			document.querySelector('#create-puzzles')
+				.addEventListener('click', createPuzzles, false);
+		});
+	});
+
+	/**
+	 * View 2
+	 * Uploaded image preview
+	 */
+
+	Page('upload', function() {
+		View.loadTransition('views/upload.html', function() {
 
 			// Initialize image uploader
 			Uploader.init({
@@ -41,30 +56,8 @@ var init = function() {
 			})
 			.then(function(imageBase64) {
 				uploadImageBase64 = imageBase64;
-				Page('preview');
-			});
-		});
-	});
-
-	/**
-	 * View 2
-	 * Uploaded image preview
-	 */
-
-	Page('preview', function() {
-		View.loadTransition('views/preview.html', function() {
-
-			// Initialize preview
-			Preview.init({
-				uploadImageBase64: uploadImageBase64,
-				puzzlePreviewImgEl: document.querySelector('#puzzle-preview img')
-			});
-
-			var createPuzzles = function() {
 				Page('game');
-			};
-
-			document.querySelector('#create-puzzle').addEventListener('click', createPuzzles, false);
+			});
 		});
 	});
 
