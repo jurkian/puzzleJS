@@ -121,16 +121,20 @@
 
 /* Show/hide views */
 
-@keyframes hide-view {
-  0% {}
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
 
   100% {
     opacity: 0;
   }
 }
 
-@keyframes show-view {
-  0% {}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
 
   100% {
     opacity: 1;
@@ -138,11 +142,11 @@
 }
 
 .view-out {
-  animation: hide-view .35s forwards;
+  animation: fade-out .35s forwards;
 }
 
 .view-in {
-  animation: show-view .35s forwards;
+  animation: fade-in .35s forwards;
 }
 
 /* Responsive views */

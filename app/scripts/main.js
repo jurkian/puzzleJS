@@ -23,6 +23,7 @@ var init = function() {
 	// Set routing
 
 	View.init(document.querySelector('.wrapper'));
+	Page.base('/');
 
 	/**
 	 * View 1
