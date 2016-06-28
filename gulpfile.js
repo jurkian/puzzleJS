@@ -72,10 +72,16 @@ gulp.task('images', () => {
 		.pipe(gulp.dest('dist/images'));
 });
 
-gulp.task('extras', () => {
+gulp.task('views', () => {
+	return gulp.src('app/views/**')
+		.pipe(gulp.dest('dist/views'));
+});
+
+gulp.task('extras', ['views'], () => {
 	return gulp.src([
+		'app/views/',
 		'app/*.*',
-		'!app/*.html'
+		'!app/*.html',
 	], {
 		dot: true
 	}).pipe(gulp.dest('dist'));
@@ -88,7 +94,10 @@ gulp.task('serve', ['styles', 'scripts'], () => {
 		notify: false,
 		port: 9000,
 		server: {
-			baseDir: ['.tmp', 'app']
+			baseDir: ['.tmp', 'app'],
+			routes: {
+				'/node_modules': 'node_modules'
+			}
 		}
 	});
 

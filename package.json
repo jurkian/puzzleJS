@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "bootstrap-sass": "^3.3.6",
+    "core-js": "^2.4.0",
     "page": "^1.7.1"
   }
 }

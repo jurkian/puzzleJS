@@ -1,3 +1,5 @@
+require('./polyfills.js');
+
 let Tools = require('./tools.js'),
 	Page = require('page'),
 	View = require('./view.js'),
