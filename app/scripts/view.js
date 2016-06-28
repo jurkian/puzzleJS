@@ -1,27 +1,25 @@
 // Settings
-var s = {
+let s = {
 	container: {},
 	cache: {}
 };
 
-var init = function(container) {
-	s.container = container;
-};
+let init = container => s.container = container;
 
 // Get HTML template
-var getTemplate = function(url, callback) {
+let getTemplate = (url, callback) => {
 	if (s.cache[url]) {
 		if (typeof callback === 'function') {
 			return callback(s.cache[url]);
 		}
 	}
 
-	var request = new XMLHttpRequest();
+	let request = new XMLHttpRequest();
 
-	request.onreadystatechange = function() {
+	request.onreadystatechange = () => {
 		if (request.readyState === 4 && request.status === 200) {
 
-			var data = request.responseText;
+			let data = request.responseText;
 			s.cache[url] = data;
 
 			if (typeof callback === 'function') {
@@ -35,13 +33,13 @@ var getTemplate = function(url, callback) {
 };
 
 // Render the view
-var render = function(html) {
+let render = html => {
 	s.container.innerHTML = '';
 	s.container.insertAdjacentHTML('beforeend', html);
 };
 
-var load = function(view, callback) {
-	getTemplate(view, function(html) {
+let load = (view, callback) => {
+	getTemplate(view, html => {
 		render(html);
 
 		if (typeof callback === 'function') {
@@ -50,17 +48,17 @@ var load = function(view, callback) {
 	});
 };
 
-var loadTransition = function(view, before, callback) {
+let loadTransition = (view, before, callback) => {
 
 	// Reset transition classes
 	s.container.classList.remove('view-out', 'view-in');
 
 	// Hide view
 	s.container.classList.add('view-out');
-	s.container.onCSSAnimationEnd(function() {
+	s.container.onCSSAnimationEnd(() => {
 
 		// Do things before showing new view
-		getTemplate(view, function(html) {
+		getTemplate(view, html => {
 			render(html);
 
 			// Before new view - callback
@@ -70,7 +68,7 @@ var loadTransition = function(view, before, callback) {
 
 			// Start showing new view
 			s.container.classList.add('view-in');
-			s.container.onCSSAnimationEnd(function() {
+			s.container.onCSSAnimationEnd(() => {
 				s.container.classList.remove('view-out', 'view-in');
 
 				if (typeof callback === 'function') {
@@ -82,7 +80,7 @@ var loadTransition = function(view, before, callback) {
 };
 
 module.exports = {
-	init: init,
-	load: load,
-	loadTransition: loadTransition
+	init,
+	load,
+	loadTransition
 };

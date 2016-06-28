@@ -1,14 +1,14 @@
-var Tools = require('./tools.js'),
+let Tools = require('./tools.js'),
 	Page = require('page'),
 	View = require('./view.js'),
 	Uploader = require('./puzzle-uploader.js'),
 	Game = require('./puzzle-game.js');
 
 // Run the game if all assets are loaded
-var init = function() {
+let init = () => {
 
 	// Local variables
-	var uploadImageBase64 = '';
+	let uploadImageBase64 = '';
 
 	// Detect if browser supports new HTML5 APIs
 	if (!Tools.isNewAPISupported()) {
@@ -30,9 +30,9 @@ var init = function() {
 	 * Image uploader
 	 */
 
-	Page('/', function() {
-		View.load('views/index.html', function() {
-			var createPuzzles = function() {
+	Page('/', () => {
+		View.load('views/index.html', () => {
+			let createPuzzles = () => {
 				Page('upload');
 			};
 
@@ -46,8 +46,8 @@ var init = function() {
 	 * Uploaded image preview
 	 */
 
-	Page('upload', function() {
-		View.loadTransition('views/upload.html', function() {
+	Page('upload', () => {
+		View.loadTransition('views/upload.html', () => {
 
 			// Initialize image uploader
 			Uploader.init({
@@ -55,7 +55,7 @@ var init = function() {
 				uploadInput: document.querySelector('#upload-input'),
 				uploadOverClass: 'drag-over',
 			})
-			.then(function(imageBase64) {
+			.then(imageBase64 => {
 				uploadImageBase64 = imageBase64;
 				Page('game');
 			});
@@ -67,8 +67,8 @@ var init = function() {
 	 * Game
 	 */
 
-	Page('game', function() {
-		View.loadTransition('views/game.html', function() {
+	Page('game', () => {
+		View.loadTransition('views/game.html', () => {
 
 			// Initialize game
 			Game.init({
@@ -85,7 +85,8 @@ var init = function() {
 	});
 
 	// Not found
-	Page('*', function() {});
+	Page('*', () => {});
 	Page();
 };
+
 window.addEventListener('load', init, false);

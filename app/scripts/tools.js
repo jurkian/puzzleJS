@@ -1,7 +1,7 @@
-var CSSanimationHelper = require('./css-animation-helper.js');
+require('./css-animation-helper.js');
 
-var isNewAPISupported = function() {
-	var features = {
+let isNewAPISupported = () => {
+	let features = {
 		'fr': (typeof FileReader !== 'undefined'),
 		'drag': ('draggable' in document.createElement('span') !== false),
 		'canvas': !!document.createElement('canvas').getContext
@@ -10,7 +10,7 @@ var isNewAPISupported = function() {
 	return (features.fr && features.drag && features.canvas);
 };
 
-var isLowScreenRes = function() {
+let isLowScreenRes = () => {
 	if (window.innerWidth <= 800 && window.innerHeight <= 600) {
 		return true;
 	} else {
@@ -18,21 +18,21 @@ var isLowScreenRes = function() {
 	}
 };
 
-var changeView = function(newView, beforeShowingNew, callback) {
+let changeView = (newView, beforeShowingNew, callback) => {
 	// Get currently visible view
-	var currentView = document.querySelector('.wrapper > .view:not(.hide-view)');
+	let currentView = document.querySelector('.wrapper > .view:not(.hide-view)');
 
 	// Hide current view (make it transparent)
 	currentView.classList.add('transparent-view');
 
-	currentView.onCSSTransitionEnd(function() {
+	currentView.onCSSTransitionEnd(() => {
 		// Hide it completely
 		currentView.classList.add('hide-view');
 
 		currentViewHidden();
 	});
 
-	var currentViewHidden = function() {
+	let currentViewHidden = () => {
 		// Do this before the new view becomes visible
 		if (typeof beforeShowingNew === 'function') {
 			beforeShowingNew();
@@ -41,7 +41,7 @@ var changeView = function(newView, beforeShowingNew, callback) {
 		// Start showing the new view
 		newView.classList.remove('hide-view');
 
-		newView.onCSSTransitionEnd(function() {
+		newView.onCSSTransitionEnd(() => {
 			newView.classList.remove('transparent-view');
 		});
 
@@ -52,14 +52,14 @@ var changeView = function(newView, beforeShowingNew, callback) {
 	};
 };
 
-var randomizeArray = function(o) {
-	for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+let randomizeArray = o => {
+	for(let j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
 	return o;
 };
 
 // Overwrite default settings with user's
-var updateSettings = function(defaultSettings, newSettings) {
-	for (var prop in newSettings) {
+let updateSettings = (defaultSettings, newSettings) => {
+	for (let prop in newSettings) {
 		if (newSettings.hasOwnProperty(prop)) {
 			defaultSettings[prop] = newSettings[prop];
 		}
@@ -67,9 +67,9 @@ var updateSettings = function(defaultSettings, newSettings) {
 };
 
 module.exports = {
-	isNewAPISupported: isNewAPISupported,
-	isLowScreenRes: isLowScreenRes,
-	changeView: changeView,
-	randomizeArray: randomizeArray,
-	updateSettings: updateSettings
+	isNewAPISupported,
+	isLowScreenRes,
+	changeView,
+	randomizeArray,
+	updateSettings
 };

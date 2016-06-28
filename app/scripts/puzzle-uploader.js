@@ -1,11 +1,11 @@
-var Tools = require('./tools.js');
+let Tools = require('./tools.js');
 
 // Settings
-var s = {};
+let s = {};
 
-var init = function(config) {
+let init = config => {
 
-	return new Promise(function(resolve, reject) {
+	return new Promise((resolve, reject) => {
 		// Get user's defined options
 		Tools.updateSettings(s, config);
 
@@ -13,8 +13,8 @@ var init = function(config) {
 		addDragEvents();
 
 		// User uploaded an image
-		var imageUploaded = function(e) {
-			getDroppedImage(e, function(imageBase64) {
+		let imageUploaded = e => {
+			getDroppedImage(e, imageBase64 => {
 
 				// Remove events from body
 				// We no longer need it to handle img uploading
@@ -35,26 +35,22 @@ var init = function(config) {
 };
 
 // Drag events
-var addHover = function() {
-	s.uploadDropZoneView.classList.add(s.uploadOverClass);
-};
+let addHover = () => s.uploadDropZoneView.classList.add(s.uploadOverClass);
 
-var removeHover = function() {
-	s.uploadDropZoneView.classList.remove(s.uploadOverClass);
-};
+let removeHover = () => s.uploadDropZoneView.classList.remove(s.uploadOverClass);
 
-var cancelDefault = function(e) {
+let cancelDefault = e => {
 	e.preventDefault();
 	return false;
 };
 
-var handleImageDrop = function(e) {
+let handleImageDrop = e => {
 	e.preventDefault();
 	e.stopPropagation();
 
-	return new Promise(function(resolve, reject) {
+	return new Promise((resolve, reject) => {
 		// Detect if user uploaded the image using drag and drop or file input method
-		var uploadedFile = '';
+		let uploadedFile = '';
 
 		uploadedFile = (e.type === 'drop') ? e.dataTransfer.files : s.uploadInput.files;
 
@@ -73,12 +69,12 @@ var handleImageDrop = function(e) {
 	});
 };
 
-var getImageBase64 = function(file) {
-	var reader = new FileReader(),
+let getImageBase64 = file => {
+	let reader = new FileReader(),
 		imageCode = '';
 
-	return new Promise(function(resolve, reject) {
-		reader.onload = function() {
+	return new Promise((resolve, reject) => {
+		reader.onload = () => {
 			imageCode = reader.result;
 			resolve(imageCode);
 		};
@@ -87,28 +83,28 @@ var getImageBase64 = function(file) {
 	});
 };
 
-var getDroppedImage = function(e, callback) {
-	handleImageDrop(e).then(function(uploadedFile) {
+let getDroppedImage = (e, callback) => {
+	handleImageDrop(e).then(uploadedFile => {
 		return getImageBase64(uploadedFile);
-	}).then(function(imageBase64) {
+	}).then(imageBase64 => {
 		return callback(imageBase64);
 	});
 };
 
 // Add drag events
-var addDragEvents = function() {
+let addDragEvents = () => {
 	document.body.addEventListener('dragenter', addHover, false);
 	document.body.addEventListener('dragleave', removeHover, false);
 	document.body.addEventListener('dragover', cancelDefault, false);
 };
 
 // Remove all registered drag and drop events
-var removeDragEvents = function() {
+let removeDragEvents = () => {
 	document.body.removeEventListener('dragenter', addHover);
 	document.body.removeEventListener('dragleave', removeHover);
 	document.body.removeEventListener('dragover', cancelDefault);
 };
 
 module.exports = {
-	init: init
+	init
 };

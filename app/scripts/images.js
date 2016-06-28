@@ -1,12 +1,12 @@
-var resizeUploaded = function(imageCode, wWidth) {
-	var canvas = document.createElement('canvas'),
+let resizeUploaded = (imageCode, wWidth) => {
+	let canvas = document.createElement('canvas'),
 		ctx = canvas.getContext('2d'),
 		img = new Image(),
 		targetImageWidth = wWidth * 0.475;
 
-	return new Promise(function(resolve, reject) {
+	return new Promise((resolve, reject) => {
 		img.src = imageCode;
-		img.onload = function() {
+		img.onload = () => {
 
 			// If the image doesn't need to be resized (has less width than targeted)
 			// return the imageCode
@@ -28,26 +28,26 @@ var resizeUploaded = function(imageCode, wWidth) {
 	});
 };
 
-var splitToParts = function(resizedImgCode, tilesX, tilesY) {
-	var canvas = document.createElement('canvas'),
+let splitToParts = (resizedImgCode, tilesX, tilesY) => {
+	let canvas = document.createElement('canvas'),
 		ctx = canvas.getContext('2d'),
 		img = new Image(),
 		imgParts = [],
 		singleWidth = 0,
 		singleHeight = 0;
 
-	return new Promise(function(resolve, reject) {
+	return new Promise((resolve, reject) => {
 
 		// Prepare image to split into parts
 		img.src = resizedImgCode;
-		img.onload = function() {
+		img.onload = () => {
 
 			// Convert image (base64) to parts (single puzzles), using canvas
 			singleWidth = img.width / tilesX;
 			singleHeight = img.height / tilesY;
 
-			for (var y = 0; y < tilesY; y++) {
-				for (var x = 0; x < tilesX; x++) {
+			for (let y = 0; y < tilesY; y++) {
+				for (let x = 0; x < tilesX; x++) {
 					
 					canvas.width = singleWidth;
 					canvas.height = singleHeight;
@@ -62,7 +62,7 @@ var splitToParts = function(resizedImgCode, tilesX, tilesY) {
 				}
 			}
 
-			var data = {
+			let data = {
 				list: imgParts,
 				singleWidth: singleWidth,
 				singleHeight: singleHeight
@@ -74,6 +74,6 @@ var splitToParts = function(resizedImgCode, tilesX, tilesY) {
 };
 
 module.exports = {
-	resizeUploaded: resizeUploaded,
-	splitToParts: splitToParts
+	resizeUploaded,
+	splitToParts
 };
