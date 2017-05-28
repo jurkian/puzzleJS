@@ -16,8 +16,8 @@ let Tools = require('./lib/tools.js'),
 	Uploader = require('./lib/puzzle-uploader.js'),
 	Game = require('./lib/puzzle-game.js');
 
-// Run the game if all assets are loaded
-let init = () => {
+// Run the game when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
 
 	// Local variables
 	let uploadImageBase64 = '';
@@ -99,6 +99,4 @@ let init = () => {
 	// Not found
 	Page('*', () => {});
 	Page();
-};
-
-window.addEventListener('load', init, false);
+});
