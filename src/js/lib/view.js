@@ -14,22 +14,17 @@ let getTemplate = (url, callback) => {
 		}
 	}
 
-	let request = new XMLHttpRequest();
+	fetch(url, {
+		method: 'GET'
+	})
+	.then((response) => response.text())
+	.then(data => {
+		s.cache[url] = data;
 
-	request.onreadystatechange = () => {
-		if (request.readyState === 4 && request.status === 200) {
-
-			let data = request.responseText;
-			s.cache[url] = data;
-
-			if (typeof callback === 'function') {
-				callback(data);
-			}
+		if (typeof callback === 'function') {
+			callback(data);
 		}
-	};
-
-	request.open('GET', url, true);
-	request.send();
+	});
 };
 
 // Render the view
