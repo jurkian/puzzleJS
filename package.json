@@ -30,6 +30,8 @@
   },
   "dependencies": {
     "bootstrap-sass": "^3.3.7",
-    "page": "^1.7.1"
+    "page": "^1.7.1",
+    "promise-polyfill": "^6.0.2",
+    "whatwg-fetch": "^2.0.3"
   }
 }

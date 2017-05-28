@@ -7,6 +7,9 @@ import './lib/html-views';
 // Scss
 import '../sass/site.scss';
 
+// Polyfills
+import './lib/polyfills';
+
 let Tools = require('./lib/tools.js'),
 	Page = require('page'),
 	View = require('./lib/view.js'),
