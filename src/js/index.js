@@ -1,10 +1,17 @@
-require('./polyfills.js');
+// General files
+import '../robots.txt';
 
-let Tools = require('./tools.js'),
+// HTML views
+import './lib/html-views';
+
+// Scss
+import '../sass/site.scss';
+
+let Tools = require('./lib/tools.js'),
 	Page = require('page'),
-	View = require('./view.js'),
-	Uploader = require('./puzzle-uploader.js'),
-	Game = require('./puzzle-game.js');
+	View = require('./lib/view.js'),
+	Uploader = require('./lib/puzzle-uploader.js'),
+	Game = require('./lib/puzzle-game.js');
 
 // Run the game if all assets are loaded
 let init = () => {
