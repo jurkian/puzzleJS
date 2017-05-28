@@ -74,11 +74,6 @@ Tools.changeView = (newView, beforeShowingNew, callback) => {
 	};
 };
 
-Tools.randomizeArray = o => {
-	for(let j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-	return o;
-};
-
 // Overwrite default settings with user's
 Tools.updateSettings = (defaultSettings, newSettings) => {
 	for (let prop in newSettings) {

@@ -1,4 +1,5 @@
 import Tools from './tools';
+import shuffle from 'lodash.shuffle';
 
 let Generators = {};
 
@@ -20,7 +21,7 @@ Generators.drawPuzzles = (puzzleCodes, puzzleContainer) => {
 	});
 
 	// Randomize the puzzles
-	generatedImages = Tools.randomizeArray(generatedImages);
+	generatedImages = shuffle(generatedImages);
 
 	// Draw images on screen
 	generatedImages.forEach((el) => {
