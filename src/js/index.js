@@ -10,11 +10,11 @@ import '../sass/site.scss';
 // Polyfills
 import './lib/polyfills';
 
-let Tools = require('./lib/tools.js'),
-	Page = require('page'),
-	View = require('./lib/view.js'),
-	Uploader = require('./lib/puzzle-uploader.js'),
-	Game = require('./lib/puzzle-game.js');
+import Tools from './lib/tools';
+import Page from 'page';
+import View from './lib/view';
+import Uploader from './lib/puzzle-uploader';
+import Game from './lib/puzzle-game';
 
 // Run the game when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {

@@ -1,6 +1,8 @@
-require('./css-animation-helper.js');
+import './css-animation-helper';
 
-let isNewAPISupported = () => {
+let Tools = {};
+
+Tools.isNewAPISupported = () => {
 	let features = {
 		'fr': (typeof FileReader !== 'undefined'),
 		'drag': ('draggable' in document.createElement('span') !== false),
@@ -10,7 +12,7 @@ let isNewAPISupported = () => {
 	return (features.fr && features.drag && features.canvas);
 };
 
-let isLowScreenRes = () => {
+Tools.isLowScreenRes = () => {
 	if (window.innerWidth <= 800 && window.innerHeight <= 600) {
 		return true;
 	} else {
@@ -18,7 +20,7 @@ let isLowScreenRes = () => {
 	}
 };
 
-let changeView = (newView, beforeShowingNew, callback) => {
+Tools.changeView = (newView, beforeShowingNew, callback) => {
 	// Get currently visible view
 	let currentView = document.querySelector('.wrapper > .view:not(.hide-view)');
 
@@ -52,13 +54,13 @@ let changeView = (newView, beforeShowingNew, callback) => {
 	};
 };
 
-let randomizeArray = o => {
+Tools.randomizeArray = o => {
 	for(let j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
 	return o;
 };
 
 // Overwrite default settings with user's
-let updateSettings = (defaultSettings, newSettings) => {
+Tools.updateSettings = (defaultSettings, newSettings) => {
 	for (let prop in newSettings) {
 		if (newSettings.hasOwnProperty(prop)) {
 			defaultSettings[prop] = newSettings[prop];
@@ -66,10 +68,4 @@ let updateSettings = (defaultSettings, newSettings) => {
 	}
 };
 
-module.exports = {
-	isNewAPISupported,
-	isLowScreenRes,
-	changeView,
-	randomizeArray,
-	updateSettings
-};
+export default Tools;

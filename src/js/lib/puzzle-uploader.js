@@ -1,9 +1,11 @@
-let Tools = require('./tools.js');
+import Tools from './tools';
+
+let PuzzleUploader = {};
 
 // Settings
 let s = {};
 
-let init = config => {
+PuzzleUploader.init = config => {
 
 	return new Promise((resolve, reject) => {
 		// Get user's defined options
@@ -105,6 +107,4 @@ let removeDragEvents = () => {
 	document.body.removeEventListener('dragover', cancelDefault);
 };
 
-module.exports = {
-	init
-};
+export default PuzzleUploader;

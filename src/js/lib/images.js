@@ -1,4 +1,6 @@
-let resizeUploaded = (imageCode, wWidth) => {
+let Images = {};
+
+Images.resizeUploaded = (imageCode, wWidth) => {
 	let canvas = document.createElement('canvas'),
 		ctx = canvas.getContext('2d'),
 		img = new Image(),
@@ -28,7 +30,7 @@ let resizeUploaded = (imageCode, wWidth) => {
 	});
 };
 
-let splitToParts = (resizedImgCode, tilesX, tilesY) => {
+Images.splitToParts = (resizedImgCode, tilesX, tilesY) => {
 	let canvas = document.createElement('canvas'),
 		ctx = canvas.getContext('2d'),
 		img = new Image(),
@@ -73,7 +75,4 @@ let splitToParts = (resizedImgCode, tilesX, tilesY) => {
 	});
 };
 
-module.exports = {
-	resizeUploaded,
-	splitToParts
-};
+export default Images;

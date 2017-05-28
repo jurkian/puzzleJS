@@ -1,10 +1,12 @@
+let View = {};
+
 // Settings
 let s = {
 	container: {},
 	cache: {}
 };
 
-let init = container => s.container = container;
+View.init = container => s.container = container;
 
 // Get HTML template
 let getTemplate = (url, callback) => {
@@ -33,7 +35,7 @@ let render = html => {
 	s.container.insertAdjacentHTML('beforeend', html);
 };
 
-let load = (view, callback) => {
+View.load = (view, callback) => {
 	getTemplate(view, html => {
 		render(html);
 
@@ -43,7 +45,7 @@ let load = (view, callback) => {
 	});
 };
 
-let loadTransition = (view, before, callback) => {
+View.loadTransition = (view, before, callback) => {
 
 	// Reset transition classes
 	s.container.classList.remove('view-out', 'view-in');
@@ -74,8 +76,4 @@ let loadTransition = (view, before, callback) => {
 	});
 };
 
-module.exports = {
-	init,
-	load,
-	loadTransition
-};
+export default View;

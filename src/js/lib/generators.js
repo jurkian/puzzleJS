@@ -1,6 +1,8 @@
-let Tools = require('./tools.js');
+import Tools from './tools';
 
-let drawPuzzles = (puzzleCodes, puzzleContainer) => {
+let Generators = {};
+
+Generators.drawPuzzles = (puzzleCodes, puzzleContainer) => {
 	let generatedImages = [],
 		i = 0,
 		len = 0;
@@ -26,7 +28,7 @@ let drawPuzzles = (puzzleCodes, puzzleContainer) => {
 	});
 };
 
-let drawPuzzleDropZones = (tilesX, tilesY, imgWidth, imgHeight, dropZonesEl) => {
+Generators.drawPuzzleDropZones = (tilesX, tilesY, imgWidth, imgHeight, dropZonesEl) => {
 	
 	return new Promise((resolve, reject) => {
 		let i = 0;
@@ -49,7 +51,4 @@ let drawPuzzleDropZones = (tilesX, tilesY, imgWidth, imgHeight, dropZonesEl) => 
 	});
 };
 
-module.exports = {
-	drawPuzzles,
-	drawPuzzleDropZones
-};
+export default Generators;

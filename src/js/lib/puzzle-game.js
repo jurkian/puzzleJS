@@ -1,6 +1,8 @@
-let Tools = require('./tools.js'),
-	Images = require('./images.js'),
-	Generators = require('./generators.js');
+import Tools from './tools';
+import Images from './images';
+import Generators from './generators';
+
+let PuzzleGame = {};
 
 // Settings
 let s = {};
@@ -12,13 +14,13 @@ let w = window,
 	g = d.getElementsByTagName('body')[0],
 	windowWidth = w.innerWidth || e.clientWidth || g.clientWidth;
 
-let init = config => {
+PuzzleGame.init = config => {
 	// Get user's defined options
 	Tools.updateSettings(s, config);
 };
 
 // Generate puzzles basing on chosen X and Y tiles amount
-let generatePuzzles = (tilesX, tilesY) => {
+PuzzleGame.generatePuzzles = (tilesX, tilesY) => {
 	return new Promise((resolve, reject) => {
 
 		// X and Y tiles can be only integers
@@ -200,7 +202,4 @@ let makePuzzlesDraggable = () => {
 	document.body.addEventListener('dragover', gameEvents.bodyDragOver, false);
 };
 
-module.exports = {
-	init,
-	generatePuzzles
-};
+export default PuzzleGame;
