@@ -1,6 +1,26 @@
-import './css-animation-helper';
-
 let Tools = {};
+
+// Detect CSS transition or animation end
+// and do callback
+Tools.onCSSEnd = (type, element, callback) => {
+
+	// > 94% global support, by caniuse.com
+	let animationEvents = ['animationend', 'webkitAnimationEnd'],
+		transitionEvents = ['transitionend', 'webkitTransitionEnd'];
+
+	let onEnd = event => {
+		callback();
+
+		// When the transition/animation has finished, remove the event listener
+		event.target.removeEventListener(event.type, onEnd);
+	};
+
+	if (type === 'transition') {
+		transitionEvents.forEach(event => element.addEventListener(event, onEnd));
+	} else {
+		animationEvents.forEach(event => element.addEventListener(event, onEnd));
+	}
+};
 
 Tools.isNewAPISupported = () => {
 	let features = {
@@ -27,7 +47,7 @@ Tools.changeView = (newView, beforeShowingNew, callback) => {
 	// Hide current view (make it transparent)
 	currentView.classList.add('transparent-view');
 
-	currentView.onCSSTransitionEnd(() => {
+	Tools.onCSSEnd('transition', currentView, () => {
 		// Hide it completely
 		currentView.classList.add('hide-view');
 
@@ -43,7 +63,7 @@ Tools.changeView = (newView, beforeShowingNew, callback) => {
 		// Start showing the new view
 		newView.classList.remove('hide-view');
 
-		newView.onCSSTransitionEnd(() => {
+		Tools.onCSSEnd('transition', newView, () => {
 			newView.classList.remove('transparent-view');
 		});
 

@@ -1,3 +1,5 @@
+import Tools from './tools';
+
 let View = {};
 
 // Settings
@@ -52,7 +54,7 @@ View.loadTransition = (view, before, callback) => {
 
 	// Hide view
 	s.container.classList.add('view-out');
-	s.container.onCSSAnimationEnd(() => {
+	Tools.onCSSEnd('animation', s.container, () => {
 
 		// Do things before showing new view
 		getTemplate(view, html => {
@@ -65,7 +67,7 @@ View.loadTransition = (view, before, callback) => {
 
 			// Start showing new view
 			s.container.classList.add('view-in');
-			s.container.onCSSAnimationEnd(() => {
+			Tools.onCSSEnd('animation', s.container, () => {
 				s.container.classList.remove('view-out', 'view-in');
 
 				if (typeof callback === 'function') {
