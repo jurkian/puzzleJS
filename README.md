@@ -1,6 +1,8 @@
 # puzzleJS
 Create puzzles from the uploaded image
 
+![puzzleJS screenshot](screenshot.png?raw=true)
+
 ## Getting started
 
 1. Install [Node JS](http://nodejs.org/)
